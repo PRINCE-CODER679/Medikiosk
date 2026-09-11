@@ -60,7 +60,7 @@ export function IntegrationsPage() {
       >
         <div className="py-6 px-4 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-6">
           <div className="overflow-x-auto pb-2 scrollbar-none">
-            <div className="flex items-center justify-between relative min-w-[500px] sm:min-w-0">
+            <div className="flex items-center justify-between relative min-w-0">
               <div className="absolute top-1/2 left-6 right-6 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
 
               {steps.map((st) => {
