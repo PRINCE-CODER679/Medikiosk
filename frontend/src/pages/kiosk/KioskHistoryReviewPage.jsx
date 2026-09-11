@@ -95,7 +95,7 @@ export function KioskHistoryReviewPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-between select-none font-sans">
       {/* Kiosk Header */}
-      <KioskHeader showBack={true} onBack={() => navigate('/kiosk/history')} />
+      <KioskHeader showBack={true} onBack={() => navigate('/kiosk/history/documents')} />
 
       {/* Progress Stepper (Overall Step 4) */}
       <KioskStepIndicator currentStep={4} />

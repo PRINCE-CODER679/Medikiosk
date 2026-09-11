@@ -55,8 +55,8 @@ export function KioskAiConversationPage() {
         setConversation(res.data);
         await loadNextQuestion(res.data.conversationId);
       } else {
-        setErrorMessage('Could not connect to conversation service. Switching to summary review.');
-        setTimeout(() => navigate('/kiosk/history/review'), 2000);
+        setErrorMessage('Could not connect to conversation service. Proceeding to safety assessment.');
+        setTimeout(() => navigate('/kiosk/history/safety'), 2000);
       }
       setLoading(false);
     }
@@ -92,7 +92,8 @@ export function KioskAiConversationPage() {
 
   // 3. Submit Answer
   const handleAnswerSubmit = async (answerVal) => {
-    const finalAnswer = (answerVal || selectedOption || customAnswer).trim();
+    const rawVal = typeof answerVal === 'string' ? answerVal : (selectedOption || customAnswer || '');
+    const finalAnswer = String(rawVal).trim();
     if (!finalAnswer) {
       setErrorMessage('Please select or type an answer to continue.');
       return;
@@ -121,8 +122,8 @@ export function KioskAiConversationPage() {
       console.log('[KioskAI] Answer submit succeeded. Loading next question...');
       await loadNextQuestion(convId);
     } else {
-      console.error('[KioskAI] Answer submit failed, navigating to review:', res.error);
-      navigate('/kiosk/history/review');
+      console.error('[KioskAI] Answer submit failed, navigating to safety assessment:', res.error);
+      navigate('/kiosk/history/safety');
     }
   };
 
@@ -137,7 +138,7 @@ export function KioskAiConversationPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-between select-none font-sans">
       {/* Kiosk Header */}
-      <KioskHeader showBack={true} onBack={() => navigate('/kiosk/history/review')} />
+      <KioskHeader showBack={true} onBack={() => navigate('/kiosk/history')} />
 
       {/* Stepper (Step 4) */}
       <KioskStepIndicator currentStep={4} />
