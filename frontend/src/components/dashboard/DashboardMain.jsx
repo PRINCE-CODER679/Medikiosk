@@ -260,8 +260,8 @@ export function DashboardMain({
               </div>
             </div>
 
-            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              <span className="truncate">Good morning, Dr. Ananya Sharma</span>
+            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex flex-wrap items-center gap-2">
+              <span>Good morning, Dr. Ananya Sharma</span>
               <span className="text-lg sm:text-xl shrink-0">🩺</span>
             </h1>
 

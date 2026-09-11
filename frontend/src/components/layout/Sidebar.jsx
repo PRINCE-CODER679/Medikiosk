@@ -73,12 +73,7 @@ export function Sidebar({ isOpen = false, onClose, className = '' }) {
   return (
     <aside
       className={`
-        w-64 bg-gradient-to-b from-[#090E17] via-[#0F172A] to-[#0B1120] text-slate-300 flex flex-col justify-between border-r border-slate-800/80 shrink-0 select-none shadow-2xl z-50
-        /* Mobile: fixed overlay drawer, slides in/out */
-        fixed inset-y-0 left-0 transform transition-transform duration-250 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        /* Desktop: sticky sidebar, always visible */
-        lg:sticky lg:top-0 lg:h-screen lg:translate-x-0
+        w-64 bg-gradient-to-b from-[#090E17] via-[#0F172A] to-[#0B1120] text-slate-300 flex flex-col justify-between border-r border-slate-800/80 shrink-0 select-none shadow-2xl z-50 h-screen sticky top-0
         ${className}
       `}
     >
