@@ -49,7 +49,7 @@ export function RecentEncountersTable({ encounters = [] }) {
         padding={false}
       >
         {/* Search bar inside Card */}
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4 bg-slate-50/50">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between gap-4 bg-slate-50/50">
           <div className="relative flex-1 max-w-sm">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -71,8 +71,88 @@ export function RecentEncountersTable({ encounters = [] }) {
           </div>
         </div>
 
-        {/* Table Content */}
-        <div className="w-full overflow-x-auto">
+        {/* ── MOBILE CARDS VIEW (VISIBLE ON MOBILE SCREENS < MD) ── */}
+        <div className="block md:hidden divide-y divide-slate-100 bg-white p-3 space-y-3">
+          {filtered.length === 0 ? (
+            <div className="p-8 text-center text-xs text-slate-400 font-medium">
+              No patient intake records match search.
+            </div>
+          ) : (
+            filtered.map((row) => {
+              const isCritical = row.urgency === 'Critical';
+              const isUrgent = row.urgency === 'Urgent';
+              const isModerate = row.urgency === 'Moderate';
+
+              return (
+                <div
+                  key={row.id}
+                  onClick={() => setSelectedEncounter(row)}
+                  className="p-4 rounded-xl border border-slate-200 hover:border-blue-300 bg-slate-50/50 space-y-3 cursor-pointer shadow-2xs"
+                >
+                  {/* Row Header */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`w-9 h-9 rounded-full font-bold text-xs flex items-center justify-center shrink-0 ${
+                        isCritical ? 'bg-red-100 text-red-700' : isUrgent ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {row.patientName ? row.patientName.charAt(0) : 'P'}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-900 text-sm truncate">{row.patientName}</p>
+                        <p className="text-xs text-slate-500">{row.age}y • {row.gender} • <span className="font-mono text-slate-600">{row.patientId}</span></p>
+                      </div>
+                    </div>
+
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shrink-0 ${
+                      isCritical
+                        ? 'bg-red-100 text-red-700 border border-red-200'
+                        : isUrgent
+                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                        : isModerate
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${isCritical ? 'bg-red-600 animate-pulse' : isUrgent ? 'bg-amber-600' : 'bg-emerald-500'}`} />
+                      {row.urgency}
+                    </span>
+                  </div>
+
+                  {/* Complaint & Time */}
+                  <div className="bg-white p-3 rounded-lg border border-slate-200 text-xs space-y-1">
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                      <span>Reported Concern</span>
+                      <span>{row.time}</span>
+                    </div>
+                    <p className="font-bold text-slate-900 text-xs">"{row.complaint}"</p>
+                    <p className="text-xs text-slate-500 line-clamp-2 pt-1 border-t border-slate-100">{row.aiSummary}</p>
+                  </div>
+
+                  {/* Action */}
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[11px] font-semibold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                      {row.status}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedEncounter(row);
+                      }}
+                      className="px-3.5 py-1.5 text-xs font-bold text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg shadow-2xs inline-flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Review Triage</span>
+                    </button>
+                  </div>
+
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* ── DESKTOP TABLE VIEW (VISIBLE ON MD SCREENS AND LARGER) ── */}
+        <div className="hidden md:block w-full overflow-x-auto">
           <div className="min-w-[980px]">
             
             {/* Header */}
@@ -191,11 +271,11 @@ export function RecentEncountersTable({ encounters = [] }) {
         title={`Clinical Summary — ${selectedEncounter?.patientName}`}
         subtitle={`Encounter ID: ${selectedEncounter?.id} • Intake Location: ${selectedEncounter?.kioskId}`}
         footer={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-end gap-2 w-full">
             <button
               type="button"
               onClick={() => setSelectedEncounter(null)}
-              className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-colors cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-colors cursor-pointer text-center"
             >
               Close
             </button>
@@ -206,9 +286,9 @@ export function RecentEncountersTable({ encounters = [] }) {
                 setSelectedEncounter(null);
                 navigate(`/patients/${patId}`);
               }}
-              className="px-4 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors inline-flex items-center gap-2 cursor-pointer shadow-2xs"
+              className="w-full sm:w-auto px-4 py-2 text-xs font-bold text-white bg-[#1E56A0] hover:bg-[#16427D] rounded-xl transition-colors inline-flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
             >
-              <FileCheck className="w-3.5 h-3.5 text-teal-400" />
+              <FileCheck className="w-3.5 h-3.5 text-teal-300" />
               <span>{t('dash_btn_open_profile', 'Open Patient Profile')}</span>
             </button>
           </div>
@@ -216,7 +296,7 @@ export function RecentEncountersTable({ encounters = [] }) {
       >
         {selectedEncounter && (
           <div className="space-y-4 text-slate-900 bg-white text-left font-sans">
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div>
                 <span className="font-extrabold text-slate-900">{selectedEncounter.patientName}</span>
                 <span className="text-slate-500 ml-2 font-medium">
@@ -250,9 +330,9 @@ export function RecentEncountersTable({ encounters = [] }) {
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                 Structured Clinical Summary Draft
               </p>
-              <div className="p-4 bg-slate-900 text-slate-100 rounded-xl text-xs leading-relaxed space-y-2.5">
-                <p>{selectedEncounter.aiSummary}</p>
-                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-teal-300 font-mono">
+              <div className="p-4 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-xs leading-relaxed space-y-2.5">
+                <p className="font-medium">{selectedEncounter.aiSummary}</p>
+                <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px] text-teal-700 font-mono font-bold">
                   <span>Confidence Score: 96% Verified</span>
                   <span>FHIR DocumentReference Ready</span>
                 </div>

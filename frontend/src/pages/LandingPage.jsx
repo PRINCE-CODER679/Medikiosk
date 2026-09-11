@@ -279,12 +279,12 @@ export function LandingPage() {
 
             {/* Brand Title */}
             <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#0B2046] tracking-tight leading-none uppercase font-sans">
+              <h1 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-[#0B2046] tracking-tight leading-none uppercase font-sans">
                 {t('medikiosk', 'MEDIKIOSK')}
               </h1>
               
               {/* Main Headline */}
-              <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-bold text-[#0F2447] tracking-tight leading-[1.2] mt-2 font-sans">
+              <h2 className="text-xl sm:text-2xl lg:text-[34px] font-bold text-[#0F2447] tracking-tight leading-[1.2] mt-2 font-sans">
                 {t('hero_message', 'Your health story, structured for your physician.')}
               </h2>
             </div>
