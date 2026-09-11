@@ -9,7 +9,54 @@ import { MOCK_ENCOUNTERS } from '../mock/encounters';
 import { MOCK_ALERTS } from '../mock/alerts';
 import { MOCK_DASHBOARD_STATS } from '../mock/dashboard';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const rawApiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/+$/, '');
+const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl.slice(0, -4) : rawApiUrl;
+const FETCH_TIMEOUT_MS = 8000;
+
+const FALLBACK_QUESTIONS = [
+  {
+    questionId: 'Q-FB-1',
+    question: 'Is your cough dry, or are you bringing up phlegm/mucus?',
+    targetSection: 'hpi',
+    targetField: 'sputumType',
+    questionType: 'single_choice',
+    options: ['Dry Cough', 'Productive with Mucus', 'Blood-tinged', 'Not Sure'],
+    shouldContinue: true,
+    mode: 'DETERMINISTIC_FALLBACK'
+  },
+  {
+    questionId: 'Q-FB-2',
+    question: 'Are you experiencing any shortness of breath or difficulty breathing?',
+    targetSection: 'hpi',
+    targetField: 'dyspneaSeverity',
+    questionType: 'single_choice',
+    options: ['No Shortness of Breath', 'Mild Breathlessness', 'Severe Breathlessness'],
+    shouldContinue: true,
+    mode: 'DETERMINISTIC_FALLBACK'
+  },
+  {
+    questionId: 'Q-FB-3',
+    question: 'Does anything specific make your symptoms better or worse?',
+    targetSection: 'hpi',
+    targetField: 'aggravatingFactor',
+    questionType: 'single_choice',
+    options: ['Better with Rest', 'Worse with Exertion', 'Unchanged'],
+    shouldContinue: true,
+    mode: 'DETERMINISTIC_FALLBACK'
+  },
+  {
+    questionId: 'Q-END-3',
+    question: 'Thank you. We have collected sufficient symptom details to prepare your clinical summary.',
+    targetSection: 'completed',
+    targetField: 'completed',
+    questionType: 'info',
+    options: [],
+    shouldContinue: false,
+    mode: 'DETERMINISTIC_FALLBACK'
+  }
+];
+
+const fallbackConversationStore = {};
 
 export const ApiService = {
   /**
@@ -19,7 +66,7 @@ export const ApiService = {
   async checkHealth() {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/health`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -94,7 +141,7 @@ export const ApiService = {
   async identifyPatient({ method = 'AUTO', identifier }) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/patients/identify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -168,7 +215,7 @@ export const ApiService = {
   async registerPatient({ name, age, gender, phone }) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/patients/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -210,7 +257,7 @@ export const ApiService = {
   async createEncounter({ patientId, source = 'MediKiosk' }) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/encounters`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -249,7 +296,7 @@ export const ApiService = {
   async createSession({ patientId, encounterId, currentStep = 'IDENTITY', languagePreference = 'en' }) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -292,7 +339,7 @@ export const ApiService = {
   async updateSession(sessionId, updates) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -327,7 +374,7 @@ export const ApiService = {
   async saveClinicalHistory(encounterId, historyData) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/encounters/${encounterId}/history`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -362,7 +409,7 @@ export const ApiService = {
   async getClinicalHistory(encounterId) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/encounters/${encounterId}/history`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -391,7 +438,7 @@ export const ApiService = {
   async createConversation({ encounterId, patientId, sessionId, languagePreference = 'en' }) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/conversations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -408,6 +455,7 @@ export const ApiService = {
     } catch (error) {
       console.warn('API createConversation fallback activated:', error.message);
       const mockConvId = `CONV-${Math.floor(10000 + Math.random() * 90000)}`;
+      fallbackConversationStore[mockConvId] = { questionCount: 0 };
       return {
         ok: true,
         data: {
@@ -431,7 +479,7 @@ export const ApiService = {
   async getNextQuestion(conversationId) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/next-question`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -446,19 +494,14 @@ export const ApiService = {
       return { ok: true, data };
     } catch (error) {
       console.warn('API getNextQuestion fallback activated:', error.message);
-      // Fallback Question
+      const currentCount = fallbackConversationStore[conversationId]?.questionCount || 0;
+      const qIndex = Math.min(currentCount, FALLBACK_QUESTIONS.length - 1);
+      const qData = FALLBACK_QUESTIONS[qIndex];
       return {
         ok: true,
         data: {
           conversationId,
-          questionId: 'Q-FB-1',
-          question: 'Is your cough dry, or are you bringing up phlegm/mucus?',
-          targetSection: 'hpi',
-          targetField: 'sputumType',
-          questionType: 'single_choice',
-          options: ['Dry Cough', 'Productive with Mucus', 'Blood-tinged', 'Not Sure'],
-          shouldContinue: true,
-          mode: 'DETERMINISTIC_FALLBACK'
+          ...qData
         }
       };
     }
@@ -471,7 +514,7 @@ export const ApiService = {
   async submitAnswer(conversationId, { questionId, targetSection, targetField, answerValue }) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -487,12 +530,16 @@ export const ApiService = {
       return { ok: true, data };
     } catch (error) {
       console.warn('API submitAnswer fallback activated:', error.message);
+      if (!fallbackConversationStore[conversationId]) {
+        fallbackConversationStore[conversationId] = { questionCount: 0 };
+      }
+      fallbackConversationStore[conversationId].questionCount += 1;
       return {
         ok: true,
         data: {
           conversationId,
           status: 'ACTIVE',
-          questionCount: 1
+          questionCount: fallbackConversationStore[conversationId].questionCount
         }
       };
     }
@@ -505,7 +552,7 @@ export const ApiService = {
   async evaluateSafetyAssessment(encounterId, patientId, sessionId) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const url = new URL(`${API_BASE_URL}/api/encounters/${encounterId}/safety-assessment`);
       if (patientId) url.searchParams.append('patient_id', patientId);
       if (sessionId) url.searchParams.append('session_id', sessionId);
@@ -552,7 +599,7 @@ export const ApiService = {
   async getSafetyAssessment(encounterId) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const response = await fetch(`${API_BASE_URL}/api/encounters/${encounterId}/safety-assessment`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -662,7 +709,7 @@ ACTIVE MEDICATIONS / PRESCRIPTION:
   async getEncounterDocuments(encounterId, patientId, sessionId = null) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
       const headers = {};
       if (sessionId) {
         headers['X-Session-ID'] = sessionId;

@@ -71,17 +71,20 @@ export function KioskAiConversationPage() {
     setCustomAnswer('');
     setErrorMessage('');
 
+    console.log('[KioskAI] Fetching next question for conversationId:', convId);
     const res = await ApiService.getNextQuestion(convId);
     if (res.ok) {
+      console.log('[KioskAI] Next question received:', res.data?.questionId, res.data?.question);
       setCurrentQuestion(res.data);
       if (voiceGuidance && res.data.question) {
         TTS.speak(res.data.question, i18n.language);
       }
       if (!res.data.shouldContinue) {
-        // Concluded questions -> transition to safety check
+        console.log('[KioskAI] Conversation completed. Navigating to safety assessment.');
         setTimeout(() => navigate('/kiosk/history/safety'), 1000);
       }
     } else {
+      console.warn('[KioskAI] Failed to fetch next question, navigating to safety assessment:', res.error);
       navigate('/kiosk/history/safety');
     }
     setLoading(false);
@@ -99,6 +102,7 @@ export function KioskAiConversationPage() {
     setErrorMessage('');
 
     const convId = conversation?.conversationId;
+    console.log('[KioskAI] Submitting answer for convId:', convId, 'questionId:', currentQuestion?.questionId, 'answer:', finalAnswer);
     const res = await ApiService.submitAnswer(convId, {
       questionId: currentQuestion.questionId,
       targetSection: currentQuestion.targetSection,
@@ -114,8 +118,10 @@ export function KioskAiConversationPage() {
     sessionStorage.setItem('clinicalHistory', JSON.stringify(history));
 
     if (res.ok) {
+      console.log('[KioskAI] Answer submit succeeded. Loading next question...');
       await loadNextQuestion(convId);
     } else {
+      console.error('[KioskAI] Answer submit failed, navigating to review:', res.error);
       navigate('/kiosk/history/review');
     }
   };

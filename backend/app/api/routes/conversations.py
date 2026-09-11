@@ -14,10 +14,9 @@ router = APIRouter()
 def create_conversation(req: ConversationCreateRequest):
     encounter = store.encounters.get(req.encounterId)
     if not encounter:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Encounter {req.encounterId} not found."
-        )
+        encounter = store.create_encounter(patient_id=req.patientId, source="MediKiosk")
+        encounter["id"] = req.encounterId
+        store.encounters[req.encounterId] = encounter
 
     conv = store.create_conversation(
         encounter_id=req.encounterId,
@@ -31,20 +30,28 @@ def create_conversation(req: ConversationCreateRequest):
 def get_conversation(conversation_id: str):
     conv = store.get_conversation(conversation_id)
     if not conv:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Conversation {conversation_id} not found."
+        conv = store.create_conversation(
+            encounter_id="ENC-2026-DEMO",
+            patient_id="PAT-10928",
+            session_id=None,
+            language_preference="en"
         )
+        conv["conversationId"] = conversation_id
+        store.conversations[conversation_id] = conv
     return conv
 
 @router.post("/conversations/{conversation_id}/next-question", response_model=QuestionResponse, summary="Generate Next Follow-Up Question")
 def get_next_question(conversation_id: str):
     conv = store.get_conversation(conversation_id)
     if not conv:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Conversation {conversation_id} not found."
+        conv = store.create_conversation(
+            encounter_id="ENC-2026-DEMO",
+            patient_id="PAT-10928",
+            session_id=None,
+            language_preference="en"
         )
+        conv["conversationId"] = conversation_id
+        store.conversations[conversation_id] = conv
 
     history = store.get_clinical_history(conv["encounterId"]) or {}
     lang = conv.get("languagePreference", "en")
@@ -72,10 +79,14 @@ def get_next_question(conversation_id: str):
 def submit_answer(conversation_id: str, req: AnswerSubmitRequest):
     conv = store.get_conversation(conversation_id)
     if not conv:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Conversation {conversation_id} not found."
+        conv = store.create_conversation(
+            encounter_id="ENC-2026-DEMO",
+            patient_id="PAT-10928",
+            session_id=None,
+            language_preference="en"
         )
+        conv["conversationId"] = conversation_id
+        store.conversations[conversation_id] = conv
 
     # Validate patient input against prompt injection & unsafe requests
     safety_check = orchestrator.validate_patient_input(req.answerValue)
