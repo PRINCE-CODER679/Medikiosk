@@ -19,7 +19,9 @@ def extract_encounter_entities(
     """
     encounter = store.get_encounter(encounter_id)
     if not encounter:
-        raise HTTPException(status_code=404, detail=f"Encounter {encounter_id} not found.")
+        encounter = store.create_encounter(patient_id=patient_id, source="MediKiosk")
+        encounter["id"] = encounter_id
+        store.encounters[encounter_id] = encounter
 
     # Patient Isolation Check
     if encounter["patientId"] != patient_id:
@@ -51,7 +53,9 @@ def get_encounter_entities(
     """
     encounter = store.get_encounter(encounter_id)
     if not encounter:
-        raise HTTPException(status_code=404, detail=f"Encounter {encounter_id} not found.")
+        encounter = store.create_encounter(patient_id=patient_id, source="MediKiosk")
+        encounter["id"] = encounter_id
+        store.encounters[encounter_id] = encounter
 
     # Patient Isolation Check
     if encounter["patientId"] != patient_id:

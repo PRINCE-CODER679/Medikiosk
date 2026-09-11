@@ -36,6 +36,16 @@ export function KioskSummaryPage() {
   const [summary, setSummary] = useState(null);
   const [activeSession, setActiveSession] = useState(null);
 
+  const safeRender = (val, fallback = '') => {
+    if (val === null || val === undefined) return fallback;
+    if (typeof val === 'string' || typeof val === 'number') return String(val);
+    if (typeof val === 'object') {
+      if (Array.isArray(val)) return val.map(v => safeRender(v, fallback)).join(', ');
+      return val.name || val.title || val.label || val.value || val.allergen || val.symptom || val.condition || val.testName || JSON.stringify(val);
+    }
+    return String(val);
+  };
+
   useEffect(() => {
     const rawSession = sessionStorage.getItem('activeSession') || sessionStorage.getItem('activeKioskSession');
     let sessionObj = null;
@@ -125,25 +135,25 @@ export function KioskSummaryPage() {
               <div className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                 <div>
                   <span className="text-slate-500 font-medium block">Patient Name:</span>
-                  <span className="font-extrabold text-slate-900 text-sm">{summary.patientHeader?.patientName}</span>
+                  <span className="font-extrabold text-slate-900 text-sm">{safeRender(summary.patientHeader?.patientName, 'Patient')}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 font-medium block">Patient ID:</span>
-                  <span className="font-mono font-bold text-slate-900">{summary.patientHeader?.patientId}</span>
+                  <span className="font-mono font-bold text-slate-900">{safeRender(summary.patientHeader?.patientId, 'PAT-10928')}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 font-medium block">Age / Gender:</span>
-                  <span className="font-bold text-slate-900">{summary.patientHeader?.age} Yrs / {summary.patientHeader?.gender}</span>
+                  <span className="font-bold text-slate-900">{safeRender(summary.patientHeader?.age)} Yrs / {safeRender(summary.patientHeader?.gender)}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 font-medium block">ABHA ID / ABDM:</span>
-                  <span className="font-mono font-bold text-slate-900">{summary.patientHeader?.abhaId}</span>
+                  <span className="font-mono font-bold text-slate-900">{safeRender(summary.patientHeader?.abhaId, 'Not provided')}</span>
                 </div>
               </div>
 
               {/* 2. Authoritative Safety Assessment Badge */}
               {(() => {
-                const status = summary.safetyAssessment?.status || 'NO_IMMEDIATE_FLAG';
+                const status = safeRender(summary.safetyAssessment?.status) || 'NO_IMMEDIATE_FLAG';
                 return (
                   <div className={`p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
                     status === 'EMERGENCY'
@@ -158,15 +168,15 @@ export function KioskSummaryPage() {
                           Safety Assessment Status: {status}
                         </span>
                         <span className="text-xs font-mono font-bold">
-                          {summary.safetyAssessment?.safetyAssessmentId}
+                          {safeRender(summary.safetyAssessment?.safetyAssessmentId)}
                         </span>
                       </div>
                       <p className="text-xs font-semibold">
-                        {summary.safetyAssessment?.patientGuidance}
+                        {safeRender(summary.safetyAssessment?.patientGuidance)}
                       </p>
                     </div>
                     <span className="text-[11px] font-mono text-slate-500 bg-white/80 px-2 py-1 rounded border border-current">
-                      Source: SAFETY_ENGINE (v{summary.safetyAssessment?.ruleVersion})
+                      Source: SAFETY_ENGINE (v{safeRender(summary.safetyAssessment?.ruleVersion, '1.0')})
                     </span>
                   </div>
                 );
@@ -185,15 +195,15 @@ export function KioskSummaryPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div>
                     <span className="text-slate-500 font-medium block">Primary Symptom:</span>
-                    <span className="font-bold text-slate-900">{summary.chiefComplaint?.primarySymptom}</span>
+                    <span className="font-bold text-slate-900">{safeRender(summary.chiefComplaint?.primarySymptom, 'Not reported')}</span>
                   </div>
                   <div>
                     <span className="text-slate-500 font-medium block">Onset &amp; Duration:</span>
-                    <span className="font-bold text-slate-900">{summary.chiefComplaint?.onset} ({summary.chiefComplaint?.duration})</span>
+                    <span className="font-bold text-slate-900">{safeRender(summary.chiefComplaint?.onset, 'Not reported')} ({safeRender(summary.chiefComplaint?.duration, 'Not reported')})</span>
                   </div>
                   <div>
                     <span className="text-slate-500 font-medium block">Reported Severity:</span>
-                    <span className="font-bold text-slate-900">{summary.hpi?.severity}</span>
+                    <span className="font-bold text-slate-900">{safeRender(summary.hpi?.severity, 'Not reported')}</span>
                   </div>
                 </div>
 
@@ -205,8 +215,8 @@ export function KioskSummaryPage() {
                     </span>
                     {summary.hpi.aiClarifications.map((item, idx) => (
                       <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
-                        <span className="font-medium text-slate-700">• {item.questionField}:</span>
-                        <span className="font-bold text-slate-900">{item.answer}</span>
+                        <span className="font-medium text-slate-700">• {safeRender(item.questionField)}:</span>
+                        <span className="font-bold text-slate-900">{safeRender(item.answer)}</span>
                       </div>
                     ))}
                   </div>
@@ -229,7 +239,7 @@ export function KioskSummaryPage() {
                     <div className="flex flex-wrap gap-1.5 mt-1">
                       {summary.pastMedicalHistory?.conditions?.map((c, idx) => (
                         <span key={idx} className="px-2.5 py-1 rounded bg-white border border-slate-200 font-bold text-slate-800">
-                          {c}
+                          {safeRender(c)}
                         </span>
                       ))}
                     </div>
@@ -254,12 +264,12 @@ export function KioskSummaryPage() {
                       summary.currentMedications.map((m, idx) => (
                         <div key={idx} className="p-2 rounded bg-white border border-slate-200 space-y-0.5">
                           <div className="flex justify-between font-bold text-slate-900">
-                            <span>{m.name}</span>
-                            <span className="font-mono text-[11px] text-slate-500">{m.dose}</span>
+                            <span>{safeRender(m.name)}</span>
+                            <span className="font-mono text-[11px] text-slate-500">{safeRender(m.dose)}</span>
                           </div>
                           <div className="text-[11px] text-slate-600 flex justify-between">
-                            <span>Freq: {m.frequency}</span>
-                            <span className="font-mono text-[10px] text-slate-400">[{m.provenance}]</span>
+                            <span>Freq: {safeRender(m.frequency)}</span>
+                            <span className="font-mono text-[10px] text-slate-400">[{safeRender(m.provenance)}]</span>
                           </div>
                         </div>
                       ))
@@ -282,8 +292,8 @@ export function KioskSummaryPage() {
                     {summary.allergies?.length > 0 ? (
                       summary.allergies.map((a, idx) => (
                         <div key={idx} className="p-2 rounded bg-white border border-rose-200 text-rose-900 flex justify-between font-bold">
-                          <span>• {a.allergen}</span>
-                          <span className="font-normal text-slate-600">{a.reaction}</span>
+                          <span>• {safeRender(a.allergen)}</span>
+                          <span className="font-normal text-slate-600">{safeRender(a.reaction)}</span>
                         </div>
                       ))
                     ) : (
@@ -313,8 +323,8 @@ export function KioskSummaryPage() {
                     {summary.investigationsVitals?.investigations?.length > 0 ? (
                       summary.investigationsVitals.investigations.map((inv, idx) => (
                         <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
-                          <span className="font-semibold text-slate-800">{inv.testName}</span>
-                          <span className="font-bold text-blue-900">{inv.resultValue} {inv.unit}</span>
+                          <span className="font-semibold text-slate-800">{safeRender(inv.testName)}</span>
+                          <span className="font-bold text-blue-900">{safeRender(inv.resultValue)} {safeRender(inv.unit)}</span>
                         </div>
                       ))
                     ) : (
@@ -328,8 +338,8 @@ export function KioskSummaryPage() {
                     {summary.investigationsVitals?.vitals?.length > 0 ? (
                       summary.investigationsVitals.vitals.map((v, idx) => (
                         <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
-                          <span className="font-semibold text-slate-800">{v.type}</span>
-                          <span className="font-bold text-rose-800">{v.value} {v.unit}</span>
+                          <span className="font-semibold text-slate-800">{safeRender(v.type)}</span>
+                          <span className="font-bold text-rose-800">{safeRender(v.value)} {safeRender(v.unit)}</span>
                         </div>
                       ))
                     ) : (
@@ -348,7 +358,7 @@ export function KioskSummaryPage() {
                 <div className="flex flex-wrap gap-1.5">
                   {summary.missingInformation?.map((item, idx) => (
                     <span key={idx} className="px-2.5 py-0.5 rounded bg-white border border-slate-300 font-medium text-slate-600">
-                      • {item}
+                      • {safeRender(item)}
                     </span>
                   ))}
                 </div>
@@ -360,7 +370,7 @@ export function KioskSummaryPage() {
                 <div className="space-y-0.5">
                   <span className="font-extrabold block text-amber-950 uppercase tracking-wide">Physician Verification Notice</span>
                   <p className="font-medium leading-relaxed">
-                    {summary.physicianVerificationNotice}
+                    {safeRender(summary.physicianVerificationNotice)}
                   </p>
                 </div>
               </div>

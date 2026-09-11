@@ -15,6 +15,7 @@ class TestPhase6ClinicalSafetyEngine(unittest.TestCase):
     def setUp(self):
         store.clinical_histories.clear()
         store.safety_assessments.clear()
+        store.encounters.clear()
 
     def test_01_normal_history_no_immediate_flag(self):
         history = {
@@ -100,8 +101,8 @@ class TestPhase6ClinicalSafetyEngine(unittest.TestCase):
         self.assertNotIn("diagnosed with", guidance)
 
     def test_09_patient_isolation_enforcement(self):
-        store.create_encounter(patient_id="PAT-10928", source="MediKiosk")
-        enc_id = list(store.encounters.keys())[0]
+        enc = store.create_encounter(patient_id="PAT-10928", source="MediKiosk")
+        enc_id = enc["id"]
 
         # Call with matching patient_id
         res1 = evaluate_safety_assessment(encounter_id=enc_id, patient_id="PAT-10928")
@@ -113,8 +114,8 @@ class TestPhase6ClinicalSafetyEngine(unittest.TestCase):
         self.assertEqual(ctx.exception.status_code, 403)
 
     def test_10_duplicate_assessment_handling_overwrite(self):
-        store.create_encounter(patient_id="PAT-10928", source="MediKiosk")
-        enc_id = list(store.encounters.keys())[0]
+        enc = store.create_encounter(patient_id="PAT-10928", source="MediKiosk")
+        enc_id = enc["id"]
 
         res1 = evaluate_safety_assessment(encounter_id=enc_id, patient_id="PAT-10928")
         res2 = evaluate_safety_assessment(encounter_id=enc_id, patient_id="PAT-10928")

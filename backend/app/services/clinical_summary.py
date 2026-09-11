@@ -146,9 +146,35 @@ class ClinicalSummaryEngine:
 
         # 5. Relevant Medical History
         pmh = history.get("pastMedicalHistory") or {}
-        conditions = list(pmh.get("conditions") or [])
-        surgeries = list(pmh.get("surgeries") or [])
-        hospitalizations = list(pmh.get("hospitalizations") or [])
+        raw_conditions = pmh.get("conditions") or []
+        conditions = []
+        for item in raw_conditions:
+            if isinstance(item, str):
+                conditions.append(item)
+            elif isinstance(item, dict):
+                conditions.append(item.get("name") or item.get("condition") or str(item))
+            else:
+                conditions.append(str(item))
+
+        raw_surgeries = pmh.get("surgeries") or []
+        surgeries = []
+        for item in raw_surgeries:
+            if isinstance(item, str):
+                surgeries.append(item)
+            elif isinstance(item, dict):
+                surgeries.append(item.get("name") or str(item))
+            else:
+                surgeries.append(str(item))
+
+        raw_hosp = pmh.get("hospitalizations") or []
+        hospitalizations = []
+        for item in raw_hosp:
+            if isinstance(item, str):
+                hospitalizations.append(item)
+            elif isinstance(item, dict):
+                hospitalizations.append(item.get("reason") or str(item))
+            else:
+                hospitalizations.append(str(item))
 
         # Include OCR conditions
         for c in entities.get("conditions", []):
@@ -176,17 +202,28 @@ class ClinicalSummaryEngine:
         medications = []
         # Reported medications from Phase 4
         for m in history.get("medications") or []:
-            medications.append({
-                "name": m.get("name", "Unknown"),
-                "dose": m.get("dose") or "Not reported",
-                "frequency": m.get("frequency") or "Not reported",
-                "reason": m.get("reason") or "Not reported",
-                "sourceDocumentId": None,
-                "provenance": "PATIENT_REPORTED"
-            })
+            if isinstance(m, str):
+                medications.append({
+                    "name": m,
+                    "dose": "Not reported",
+                    "frequency": "Not reported",
+                    "reason": "Not reported",
+                    "sourceDocumentId": None,
+                    "provenance": "PATIENT_REPORTED"
+                })
+            elif isinstance(m, dict):
+                medications.append({
+                    "name": m.get("name") or m.get("medicationName") or "Unknown",
+                    "dose": m.get("dose") or "Not reported",
+                    "frequency": m.get("frequency") or "Not reported",
+                    "reason": m.get("reason") or "Not reported",
+                    "sourceDocumentId": None,
+                    "provenance": "PATIENT_REPORTED"
+                })
+
         # Extracted medications from Phase 8 OCR
         for m in entities.get("medications") or []:
-            med_name = m.get("medicationName", "Unknown")
+            med_name = m.get("medicationName") or m.get("name") or "Unknown"
             if not any(existing["name"].lower() == med_name.lower() for existing in medications):
                 medications.append({
                     "name": med_name,
@@ -203,13 +240,21 @@ class ClinicalSummaryEngine:
         # 7. Allergies
         allergies = []
         for a in history.get("allergies") or []:
-            allergies.append({
-                "allergen": a.get("allergen", "Unknown"),
-                "reaction": a.get("reaction") or "Not reported",
-                "provenance": "PATIENT_REPORTED"
-            })
+            if isinstance(a, str):
+                allergies.append({
+                    "allergen": a,
+                    "reaction": "Not reported",
+                    "provenance": "PATIENT_REPORTED"
+                })
+            elif isinstance(a, dict):
+                allergies.append({
+                    "allergen": a.get("allergen") or a.get("name") or "Unknown",
+                    "reaction": a.get("reaction") or "Not reported",
+                    "provenance": "PATIENT_REPORTED"
+                })
+
         for a in entities.get("allergies") or []:
-            alg_name = a.get("allergen", "Unknown")
+            alg_name = a.get("allergen") or a.get("name") or "Unknown"
             if not any(existing["allergen"].lower() == alg_name.lower() for existing in allergies):
                 allergies.append({
                     "allergen": alg_name,
