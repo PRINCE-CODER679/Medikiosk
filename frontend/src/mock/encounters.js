@@ -1,0 +1,72 @@
+export const MOCK_ENCOUNTERS = [
+  {
+    id: "ENC-2026-881",
+    patientId: "PAT-10932",
+    patientName: "Suresh Gupta",
+    age: 62,
+    gender: "Male",
+    complaint: "Chest tightness & Dyspnea",
+    aiSummary: "Exertional chest pressure with SpO2 94% & elevated BP. High risk triage.",
+    urgency: "Critical",
+    status: "In Progress",
+    time: "10 mins ago",
+    kioskId: "Kiosk 04",
+    vitalsRecorded: true
+  },
+  {
+    id: "ENC-2026-880",
+    patientId: "PAT-10928",
+    patientName: "Ramesh Kumar",
+    age: 56,
+    gender: "Male",
+    complaint: "High fever & Severe headache",
+    aiSummary: "Fever 101.4F for 3 days. Penicillin allergy flagged.",
+    urgency: "Urgent",
+    status: "Waiting Physician",
+    time: "25 mins ago",
+    kioskId: "Kiosk 01",
+    vitalsRecorded: true
+  },
+  {
+    id: "ENC-2026-879",
+    patientId: "PAT-10929",
+    patientName: "Priya Sharma",
+    age: 34,
+    gender: "Female",
+    complaint: "Right lower quadrant abdominal pain",
+    aiSummary: "RLQ pain with mild fever. Triage recommends appendicitis evaluation.",
+    urgency: "Urgent",
+    status: "Waiting Physician",
+    time: "42 mins ago",
+    kioskId: "Kiosk 02",
+    vitalsRecorded: true
+  },
+  {
+    id: "ENC-2026-878",
+    patientId: "PAT-10930",
+    patientName: "Amit Patil",
+    age: 48,
+    gender: "Male",
+    complaint: "Diabetic follow-up & Rx renewal",
+    aiSummary: "Routine intake completed. Fasting blood glucose 142 mg/dL.",
+    urgency: "Routine",
+    status: "Physician Reviewed",
+    time: "1 hr 15 mins ago",
+    kioskId: "Kiosk 03",
+    vitalsRecorded: true
+  },
+  {
+    id: "ENC-2026-877",
+    patientId: "PAT-10931",
+    patientName: "Neha Singh",
+    age: 29,
+    gender: "Female",
+    complaint: "Sore throat & Cough",
+    aiSummary: "Mild viral URI symptoms. All vitals normal.",
+    urgency: "Routine",
+    status: "Discharged",
+    time: "2 hrs 30 mins ago",
+    kioskId: "Kiosk 01",
+    vitalsRecorded: true
+  }
+];
