@@ -29,7 +29,7 @@ export function Topbar({ onMenuToggle }) {
 
   return (
     <>
-      <header className="h-16 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs gap-3">
+      <header className="h-16 bg-white/85 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs gap-3 min-w-0">
         {/* Mobile menu hamburger */}
         <button
           type="button"
@@ -64,7 +64,7 @@ export function Topbar({ onMenuToggle }) {
         <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
           
           {/* Live API Health Status */}
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 text-xs">
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 text-xs shrink-0">
             <span className={`w-2 h-2 rounded-full ${apiHealth.status === 'ok' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
             <span className="font-bold text-slate-600 text-xs">API:</span>
             <span className={`font-mono text-[10px] font-extrabold px-1.5 py-0.5 rounded-md ${
@@ -78,7 +78,7 @@ export function Topbar({ onMenuToggle }) {
           <button
             type="button"
             onClick={() => navigate('/kiosk')}
-            className="hidden md:inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs"
+            className="hidden md:inline-flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs shrink-0"
           >
             <Monitor className="w-4 h-4 text-teal-600" />
             <span>{t('dash_kiosk_view', 'View Kiosk')}</span>
@@ -89,7 +89,7 @@ export function Topbar({ onMenuToggle }) {
           <button
             type="button"
             onClick={() => navigate('/alerts')}
-            className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer border border-transparent hover:border-slate-200"
+            className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer border border-transparent hover:border-slate-200 shrink-0"
             title="Priority Alerts"
             aria-label="Priority Alerts"
           >
@@ -97,7 +97,7 @@ export function Topbar({ onMenuToggle }) {
             <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-600 rounded-full ring-2 ring-white animate-pulse" />
           </button>
 
-          <div className="h-6 w-px bg-slate-200 hidden sm:block" />
+          <div className="h-6 w-px bg-slate-200 hidden sm:block shrink-0" />
 
           {/* Doctor Profile & Dropdown */}
           <div className="relative">

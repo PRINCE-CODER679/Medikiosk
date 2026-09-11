@@ -261,15 +261,15 @@ export function LandingPage() {
       {/* =========================================================================
           MAIN CONTENT AREA
           ========================================================================= */}
-      <main className="max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-10 space-y-12 sm:space-y-16 flex-1">
+      <main className="max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-10 space-y-12 sm:space-y-16 flex-1 min-w-0">
         
         {/* =====================================================================
             HERO SECTION (Matching Reference Design: 45% Text / 55% Visual)
             ===================================================================== */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center min-w-0">
           
           {/* Left Column (~45%): Clean MedTech Hierarchy */}
-          <div className="lg:col-span-5 space-y-5 text-left">
+          <div className="lg:col-span-5 space-y-5 text-left min-w-0">
             
             {/* Small Eyebrow */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100/90 border border-slate-200/80 text-slate-700 text-xs font-semibold uppercase tracking-wider">
@@ -278,8 +278,8 @@ export function LandingPage() {
             </div>
 
             {/* Brand Title */}
-            <div>
-              <h1 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-[#0B2046] tracking-tight leading-none uppercase font-sans">
+            <div className="min-w-0">
+              <h1 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-[#0B2046] tracking-tight leading-none uppercase font-sans truncate">
                 {t('medikiosk', 'MEDIKIOSK')}
               </h1>
               

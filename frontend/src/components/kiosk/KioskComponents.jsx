@@ -11,32 +11,32 @@ export function KioskHeader({
 }) {
   const { t } = useTranslation();
   return (
-    <header className="w-full bg-[#0F172A] text-white px-6 py-4 flex items-center justify-between shadow-lg border-b border-slate-800">
-      <div className="flex items-center gap-4">
+    <header className="w-full bg-[#0F172A] text-white px-4 sm:px-6 py-4 flex items-center justify-between shadow-lg border-b border-slate-800 min-w-0">
+      <div className="flex items-center gap-4 min-w-0">
         {showBack && (
           <button
             type="button"
             onClick={onBack}
-            className="p-3 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl flex items-center gap-2 font-bold text-base transition-colors border border-slate-700 cursor-pointer"
+            className="p-3 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl flex items-center gap-2 font-bold text-base transition-colors border border-slate-700 cursor-pointer shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span>{t('back')}</span>
+            <span className="hidden sm:inline">{t('back')}</span>
           </button>
         )}
-        <div className="flex items-center gap-3 bg-transparent">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#1E56A0] to-[#0D9488] flex items-center justify-center font-black text-xl shadow-md border border-white/20">
+        <div className="flex items-center gap-3 bg-transparent min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#1E56A0] to-[#0D9488] flex items-center justify-center font-black text-xl shadow-md border border-white/20 shrink-0">
             <HeartPulse className="w-5 h-5 animate-pulse text-white" />
           </div>
-          <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-white leading-none">{t('medikiosk')}</h1>
-            <p className="text-xs text-teal-400 font-semibold mt-1">{t('sih_title')}</p>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-xl font-extrabold tracking-tight text-white leading-none truncate">{t('medikiosk')}</h1>
+            <p className="text-xs text-teal-400 font-semibold mt-1 truncate">{t('sih_title')}</p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 shrink-0">
         <StatusIndicator status="operational" text={t('dash_operational_badge')} />
-        <div className="h-6 w-px bg-slate-700 hidden sm:block" />
+        <div className="h-6 w-px bg-slate-700 hidden sm:block shrink-0" />
         <button
           type="button"
           onClick={() => alert('Assistance Alert Triggered: A hospital staff member has been notified.')}
@@ -80,8 +80,8 @@ export function KioskProgressStepper({ currentStep = 3 }) {
   ];
 
   return (
-    <div className="w-full max-w-2xl mx-auto py-3 px-3 sm:px-4 bg-slate-900/90 rounded-2xl border border-slate-800 backdrop-blur-md">
-      <div className="flex items-center justify-between relative">
+    <div className="w-full max-w-2xl mx-auto py-3 px-3 sm:px-4 bg-slate-900/90 rounded-2xl border border-slate-800 backdrop-blur-md min-w-0">
+      <div className="flex items-center justify-between relative min-w-0">
         {/* Connector line */}
         <div className="absolute top-[18px] left-6 right-6 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
         
@@ -90,7 +90,7 @@ export function KioskProgressStepper({ currentStep = 3 }) {
           const isCurrent = currentStep === step.key;
 
           return (
-            <div key={step.key} className="flex flex-col items-center space-y-1 relative z-10">
+            <div key={step.key} className="flex flex-col items-center space-y-1 relative z-10 shrink-0">
               <div
                 className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
                   isDone
@@ -131,7 +131,7 @@ export function KioskButton({
       whileTap={{ scale: 0.98 }}
       type="button"
       onClick={onClick}
-      className={`w-full text-left p-6 md:p-8 rounded-3xl border-2 transition-all duration-150 flex items-center justify-between cursor-pointer ${
+      className={`w-full text-left p-6 md:p-8 rounded-3xl border-2 transition-all duration-150 flex items-center justify-between cursor-pointer min-w-0 ${
         variant === 'secondary'
           ? 'bg-gradient-to-r from-[#0D9488] to-[#0F766E] hover:from-[#0F766E] hover:to-[#0D9488] text-white border-teal-400/40 shadow-xl'
           : variant === 'outline'
@@ -139,9 +139,9 @@ export function KioskButton({
           : 'bg-gradient-to-r from-[#2563EB] to-[#1E56A0] hover:from-[#1E56A0] hover:to-[#16427D] text-white border-blue-400/40 shadow-xl'
       } ${className}`}
     >
-      <div>
-        <div className="text-2xl md:text-3xl font-black tracking-tight">{children}</div>
-        {subtext && <p className="text-sm md:text-base opacity-90 mt-1 font-semibold">{subtext}</p>}
+      <div className="min-w-0">
+        <div className="text-2xl md:text-3xl font-black tracking-tight truncate">{children}</div>
+        {subtext && <p className="text-sm md:text-base opacity-90 mt-1 font-semibold truncate">{subtext}</p>}
       </div>
       <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 ml-4 border border-white/30">
         <Icon className="w-8 h-8" />
@@ -178,12 +178,12 @@ export function VoiceButton({ isListening = false, onClick }) {
   }, [isListening]);
 
   return (
-    <div className="space-y-3 font-sans">
+    <div className="space-y-3 font-sans min-w-0">
       <motion.button
         whileTap={{ scale: 0.98 }}
         type="button"
         onClick={onClick}
-        className={`w-full relative group p-6 rounded-3xl border-2 transition-all duration-300 flex items-center justify-between cursor-pointer shadow-xl ${
+        className={`w-full relative group p-6 rounded-3xl border-2 transition-all duration-300 flex items-center justify-between cursor-pointer shadow-xl min-w-0 ${
           stage === 'listening'
             ? 'bg-red-950/90 text-white border-red-500 ring-4 ring-red-500/20'
             : stage === 'processing'
@@ -193,18 +193,18 @@ export function VoiceButton({ isListening = false, onClick }) {
             : 'bg-gradient-to-r from-slate-900 to-blue-950 text-white border-blue-500/40 hover:border-blue-400'
         }`}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 min-w-0">
           <div className="w-14 h-14 rounded-2xl bg-blue-600/30 flex items-center justify-center shrink-0 border border-blue-400/40">
             <Mic className={`w-8 h-8 ${stage === 'listening' ? 'animate-bounce text-red-400' : 'text-teal-400'}`} />
           </div>
-          <div className="text-left bg-transparent">
-            <div className="text-xl font-extrabold">
+          <div className="text-left bg-transparent min-w-0">
+            <div className="text-xl font-extrabold truncate">
               {stage === 'listening' && t('voice_listening')}
               {stage === 'processing' && t('voice_processing')}
               {stage === 'done' && t('voice_done')}
               {stage === 'idle' && t('voice_idle')}
             </div>
-            <p className="text-xs text-slate-300 mt-0.5 font-medium leading-relaxed">
+            <p className="text-xs text-slate-300 mt-0.5 font-medium leading-relaxed truncate">
               {stage === 'listening'
                 ? t('voice_instruction')
                 : t('voice_subtext')}
@@ -250,18 +250,18 @@ export function LanguageButton({ onClick, currentLang = 'English' }) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center justify-between p-5 bg-white border-2 border-slate-200 hover:border-[#1E56A0] rounded-3xl shadow-sm text-slate-900 transition-all cursor-pointer group"
+      className="w-full flex items-center justify-between p-5 bg-white border-2 border-slate-200 hover:border-[#1E56A0] rounded-3xl shadow-sm text-slate-900 transition-all cursor-pointer group min-w-0"
     >
-      <div className="flex items-center gap-3 bg-transparent">
-        <div className="p-3 bg-teal-50 text-[#0D9488] rounded-2xl group-hover:scale-105 transition-transform">
+      <div className="flex items-center gap-3 bg-transparent min-w-0">
+        <div className="p-3 bg-teal-50 text-[#0D9488] rounded-2xl group-hover:scale-105 transition-transform shrink-0">
           <Globe className="w-6 h-6" />
         </div>
-        <div className="text-left bg-transparent">
+        <div className="text-left bg-transparent min-w-0">
           <p className="text-[10px] text-slate-500 font-extrabold uppercase">{t('selected_language_kiosk')}</p>
-          <p className="text-lg font-bold text-slate-900">{currentLang}</p>
+          <p className="text-lg font-bold text-slate-900 truncate">{currentLang}</p>
         </div>
       </div>
-      <span className="text-xs font-bold text-[#1E56A0] bg-blue-50 px-3.5 py-2 rounded-xl border border-blue-100">
+      <span className="text-xs font-bold text-[#1E56A0] bg-blue-50 px-3.5 py-2 rounded-xl border border-blue-100 shrink-0">
         {t('change_language')}
       </span>
     </button>

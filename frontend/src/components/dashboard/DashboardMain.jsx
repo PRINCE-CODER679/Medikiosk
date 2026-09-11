@@ -199,7 +199,7 @@ export function DashboardMain({
   const TABLE_GRID_COLS = "grid-cols-[1.6fr_1fr_0.9fr_2fr_1.1fr_2fr_1fr_0.9fr]";
 
   return (
-    <div className="space-y-5 sm:space-y-6 text-left font-sans select-none pb-12 w-full max-w-full overflow-x-hidden">
+    <div className="space-y-5 sm:space-y-6 text-left font-sans select-none pb-12 w-full max-w-full min-w-0">
       
       {/* =====================================================================
           1. LIGHT WORKSPACE HEADER BANNER (RESPONSIVE FOR MOBILE & DESKTOP)
@@ -210,12 +210,12 @@ export function DashboardMain({
         transition={{ duration: 0.3 }}
         className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-white via-slate-50 to-blue-50/40 border border-slate-200/90 shadow-sm p-4 sm:p-7 text-slate-900"
       >
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 min-w-0">
           
           {/* Title & Demographics */}
-          <div className="space-y-1.5 sm:space-y-2">
+          <div className="space-y-1.5 sm:space-y-2 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Live OPD Feed
               </span>
@@ -261,12 +261,12 @@ export function DashboardMain({
             </div>
 
             <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              <span>Good morning, Dr. Ananya Sharma</span>
-              <span className="text-lg sm:text-xl">🩺</span>
+              <span className="truncate">Good morning, Dr. Ananya Sharma</span>
+              <span className="text-lg sm:text-xl shrink-0">🩺</span>
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl leading-relaxed">
-              Real-time patient self-intake metrics, AI priority alerts, and FHIR-ready clinical summaries for today’s OPD queue.
+              Real-time patient self-intake metrics, AI priority alerts, and FHIR-ready clinical summaries for today's OPD queue.
             </p>
           </div>
 
@@ -310,7 +310,7 @@ export function DashboardMain({
       {/* =====================================================================
           2. STANDARDIZED METRIC CARDS (1 Col Mobile, 2 Col Tablet, 4 Col Desktop)
           ===================================================================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch w-full min-w-0">
         
         {/* Card 1: Total Patients */}
         <motion.div
@@ -320,16 +320,16 @@ export function DashboardMain({
             setActiveMetricCard(activeMetricCard === 'PATIENTS' ? null : 'PATIENTS');
             setActiveFilter('ALL');
           }}
-          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between ${
+          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between min-w-0 ${
             activeMetricCard === 'PATIENTS'
               ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-md bg-blue-50/20'
               : 'border-slate-200/90 hover:border-blue-300 hover:shadow-md'
           }`}
         >
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center justify-between">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Total Patients</span>
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-[#1E56A0] flex items-center justify-center font-bold">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-[#1E56A0] flex items-center justify-center font-bold shrink-0">
                 <Users className="w-4 h-4" />
               </div>
             </div>
@@ -337,14 +337,14 @@ export function DashboardMain({
               <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {stats?.totalPatients || '248'}
               </span>
-              <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
                 <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
                 {stats?.totalPatientsTrend || '+12.4%'}
               </span>
             </div>
           </div>
 
-          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3">
+          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparklinePatients}>
                 <Area type="monotone" dataKey="v" stroke="#1E56A0" fill="#1E56A0" fillOpacity={0.12} strokeWidth={2} />
@@ -353,8 +353,8 @@ export function DashboardMain({
           </div>
 
           <div className="pt-2.5 sm:pt-3 mt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span>24 self-checked via Kiosk</span>
-            <span className="text-blue-700 font-bold">Today</span>
+            <span className="truncate">24 self-checked via Kiosk</span>
+            <span className="text-blue-700 font-bold shrink-0">Today</span>
           </div>
         </motion.div>
 
@@ -365,16 +365,16 @@ export function DashboardMain({
           onClick={() => {
             setActiveMetricCard(activeMetricCard === 'REVIEW_PENDING' ? null : 'REVIEW_PENDING');
           }}
-          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between ${
+          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between min-w-0 ${
             activeMetricCard === 'REVIEW_PENDING'
               ? 'border-teal-500 ring-2 ring-teal-500/20 shadow-md bg-teal-50/20'
               : 'border-slate-200/90 hover:border-teal-300 hover:shadow-md'
           }`}
         >
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center justify-between">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Encounters</span>
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold shrink-0">
                 <Stethoscope className="w-4 h-4" />
               </div>
             </div>
@@ -382,14 +382,14 @@ export function DashboardMain({
               <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {stats?.encountersToday || '126'}
               </span>
-              <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
                 <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
                 {stats?.encountersTrend || '+8.2%'}
               </span>
             </div>
           </div>
 
-          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3">
+          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparklineEncounters}>
                 <Area type="monotone" dataKey="v" stroke="#0D9488" fill="#0D9488" fillOpacity={0.12} strokeWidth={2} />
@@ -398,8 +398,8 @@ export function DashboardMain({
           </div>
 
           <div className="pt-2.5 sm:pt-3 mt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span>18 awaiting physician review</span>
-            <span className="text-teal-700 font-bold">Active</span>
+            <span className="truncate">18 awaiting physician review</span>
+            <span className="text-teal-700 font-bold shrink-0">Active</span>
           </div>
         </motion.div>
 
@@ -410,16 +410,16 @@ export function DashboardMain({
           onClick={() => {
             setActiveMetricCard(activeMetricCard === 'RED_FLAGS' ? null : 'RED_FLAGS');
           }}
-          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between ${
+          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between min-w-0 ${
             activeMetricCard === 'RED_FLAGS'
               ? 'border-red-500 ring-2 ring-red-500/20 shadow-md bg-red-50/20'
               : 'border-slate-200/90 hover:border-red-300 hover:shadow-md'
           }`}
         >
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center justify-between">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Red Flags</span>
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold shrink-0">
                 <AlertTriangle className="w-4 h-4" />
               </div>
             </div>
@@ -427,14 +427,14 @@ export function DashboardMain({
               <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {stats?.redFlagsCount || '8'}
               </span>
-              <span className="inline-flex items-center text-xs font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
+              <span className="inline-flex items-center text-xs font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-full border border-red-200 shrink-0">
                 <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />
                 {stats?.redFlagsUrgent || 3} Urgent
               </span>
             </div>
           </div>
 
-          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3">
+          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparklineRedFlags}>
                 <Area type="monotone" dataKey="v" stroke="#DC2626" fill="#DC2626" fillOpacity={0.12} strokeWidth={2} />
@@ -443,8 +443,8 @@ export function DashboardMain({
           </div>
 
           <div className="pt-2.5 sm:pt-3 mt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span>5 moderate risk flags</span>
-            <span className="text-red-600 font-bold">Action Needed</span>
+            <span className="truncate">5 moderate risk flags</span>
+            <span className="text-red-600 font-bold shrink-0">Action Needed</span>
           </div>
         </motion.div>
 
@@ -455,16 +455,16 @@ export function DashboardMain({
           onClick={() => {
             setActiveMetricCard(activeMetricCard === 'OCR' ? null : 'OCR');
           }}
-          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between ${
+          className={`bg-white rounded-2xl p-4 sm:p-5 border transition-all cursor-pointer shadow-sm flex flex-col justify-between min-w-0 ${
             activeMetricCard === 'OCR'
               ? 'border-indigo-500 ring-2 ring-indigo-500/20 shadow-md bg-indigo-50/20'
               : 'border-slate-200/90 hover:border-indigo-300 hover:shadow-md'
           }`}
         >
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center justify-between">
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Document OCR</span>
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold shrink-0">
                 <FileText className="w-4 h-4" />
               </div>
             </div>
@@ -472,14 +472,14 @@ export function DashboardMain({
               <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 {stats?.documentsProcessed || '394'}
               </span>
-              <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
                 <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
                 {stats?.documentsTrend || '+18.0%'}
               </span>
             </div>
           </div>
 
-          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3">
+          <div className="h-9 sm:h-10 w-full mt-2.5 sm:mt-3 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sparklineOcr}>
                 <Area type="monotone" dataKey="v" stroke="#6366F1" fill="#6366F1" fillOpacity={0.12} strokeWidth={2} />
@@ -488,8 +488,8 @@ export function DashboardMain({
           </div>
 
           <div className="pt-2.5 sm:pt-3 mt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span>Prescriptions &amp; lab reports</span>
-            <span className="text-indigo-700 font-bold">Processed</span>
+            <span className="truncate">Prescriptions &amp; lab reports</span>
+            <span className="text-indigo-700 font-bold shrink-0">Processed</span>
           </div>
         </motion.div>
 
@@ -499,11 +499,11 @@ export function DashboardMain({
       {/* =====================================================================
           3. MAIN CONTENT ROW (CHART 8-COL & ALERTS 4-COL STACKED ON MOBILE)
           ===================================================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch w-full min-w-0">
         
         {/* LEFT COLUMN: Intake Activity Chart */}
         <div className="lg:col-span-8 flex flex-col min-w-0">
-          <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between h-full">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between h-full min-w-0">
             
             {/* Chart Card Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3 shrink-0">
@@ -545,7 +545,7 @@ export function DashboardMain({
             </div>
 
             {/* Recharts Area Chart */}
-            <div className="flex-1 w-full pt-4 min-h-[220px] sm:min-h-[280px]">
+            <div className="flex-1 w-full pt-4 min-h-[220px] sm:min-h-[280px] min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
@@ -627,34 +627,34 @@ export function DashboardMain({
             </div>
 
             {/* Operational Summary Strip */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 mt-3 border-t border-slate-100 shrink-0">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 mt-3 border-t border-slate-100 shrink-0 w-full min-w-0">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 font-bold">
                   <TrendingUp className="w-4 h-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Peak Intake Hour</p>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5">10:00 AM (38 Intakes)</p>
+                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 truncate">10:00 AM (38 Intakes)</p>
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 font-bold">
                   <Clock className="w-4 h-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Avg Intake Time</p>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5">4.2 mins / Patient</p>
+                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 truncate">4.2 mins / Patient</p>
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-3 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 font-bold">
                   <Brain className="w-4 h-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">AI Escalation Rate</p>
-                  <p className="text-xs font-extrabold text-slate-900 mt-0.5">6.3% Priority Flags</p>
+                  <p className="text-xs font-extrabold text-slate-900 mt-0.5 truncate">6.3% Priority Flags</p>
                 </div>
               </div>
             </div>
@@ -664,7 +664,7 @@ export function DashboardMain({
 
         {/* RIGHT COLUMN: Priority Alerts Ticker */}
         <div className="lg:col-span-4 flex flex-col min-w-0">
-          <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between h-full">
+          <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between h-full min-w-0">
             
             {/* Header */}
             <div className="pb-3 border-b border-slate-100 shrink-0">

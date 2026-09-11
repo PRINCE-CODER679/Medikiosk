@@ -79,8 +79,8 @@ export function PatientDetailPage() {
       </AnimatePresence>
 
       {/* Back Button & Navigation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             type="button"
             onClick={() => navigate('/patients')}
@@ -89,7 +89,7 @@ export function PatientDetailPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="text-left bg-transparent min-w-0">
-            <span className="text-xs font-mono text-slate-400 font-bold">Directory &gt; {patient.id}</span>
+            <span className="text-xs font-mono text-slate-400 font-bold truncate">Directory &gt; {patient.id}</span>
             <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 leading-none mt-0.5 truncate">{patient.name}</h2>
           </div>
         </div>
@@ -97,27 +97,27 @@ export function PatientDetailPage() {
         <Badge
           variant={verifiedStatus.includes('Approved') ? 'success' : verifiedStatus.includes('Rejected') ? 'danger' : 'warning'}
           size="lg"
-          className="self-start sm:self-auto"
+          className="self-start sm:self-auto shrink-0"
         >
           Doctor Status: {verifiedStatus}
         </Badge>
       </div>
 
       {/* Patient Header Card (static on mobile, sticky on sm+) */}
-      <div className="static sm:sticky top-16 z-20 shadow-xl rounded-3xl overflow-hidden mb-6">
-        <div className="bg-gradient-to-r from-[#0F172A] via-[#1E3A8A] to-[#0D9488] text-white p-5 md:p-8">
+      <div className="static sm:sticky top-16 z-20 shadow-xl rounded-3xl overflow-hidden mb-6 min-w-0">
+        <div className="bg-gradient-to-r from-[#0F172A] via-[#1E3A8A] to-[#0D9488] text-white p-5 md:p-8 min-w-0">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 min-w-0">
               <Avatar name={patient.name} size="xl" className="ring-4 ring-white/20 shrink-0" />
               <div className="text-left bg-transparent min-w-0">
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight truncate">{patient.name}</h1>
-                  <Badge variant="primary" size="sm">ABHA Verified</Badge>
+                  <Badge variant="primary" size="sm" className="shrink-0">ABHA Verified</Badge>
                 </div>
-                <p className="text-xs text-slate-200 font-mono mt-1 font-semibold">
+                <p className="text-xs text-slate-200 font-mono mt-1 font-semibold truncate">
                   {patient.age} yrs • {patient.gender} • Blood Group: {patient.bloodGroup} • ABHA: {patient.abhaId}
                 </p>
-                <p className="text-xs text-teal-300 mt-1 font-semibold">
+                <p className="text-xs text-teal-300 mt-1 font-semibold truncate">
                   Phone: {patient.phone} • Last Visit: {new Date(patient.lastVisit).toLocaleDateString()}
                 </p>
               </div>

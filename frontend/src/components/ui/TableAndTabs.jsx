@@ -12,12 +12,12 @@ export function Table({
   fixed = false
 }) {
   const containerClass = borderless
-    ? `w-full overflow-x-auto ${className}`
-    : `w-full overflow-x-auto rounded-xl border border-slate-200/90 shadow-2xs ${className}`;
+    ? `w-full overflow-x-auto min-w-0 ${className}`
+    : `w-full overflow-x-auto rounded-xl border border-slate-200/90 shadow-2xs min-w-0 ${className}`;
 
   return (
     <div className={containerClass}>
-      <table className={`w-full text-left text-sm text-slate-700 border-collapse ${fixed ? 'table-fixed' : ''} ${tableClassName}`}>
+      <table className={`w-full text-left text-sm text-slate-700 border-collapse min-w-0 ${fixed ? 'table-fixed' : ''} ${tableClassName}`}>
         <colgroup>
           {columns.map((col, idx) => (
             <col key={idx} style={col.width ? { width: col.width } : undefined} />
@@ -29,7 +29,7 @@ export function Table({
               <th
                 key={idx}
                 style={col.width ? { width: col.width } : undefined}
-                className={`px-5 py-3 text-left ${col.className || ''}`}
+                className={`px-5 py-3 text-left whitespace-nowrap ${col.className || ''}`}
               >
                 {col.header}
               </th>
