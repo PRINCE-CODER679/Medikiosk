@@ -77,7 +77,11 @@ export function KioskAiConversationPage() {
       console.log('[KioskAI] Next question received:', res.data?.questionId, res.data?.question);
       setCurrentQuestion(res.data);
       if (voiceGuidance && res.data.question) {
-        TTS.speak(res.data.question, i18n.language);
+        try {
+          TTS.speak(res.data.question, i18n.language);
+        } catch (ttsErr) {
+          console.warn('[KioskAI] Auto TTS speak failed non-fatally:', ttsErr);
+        }
       }
       if (!res.data.shouldContinue) {
         console.log('[KioskAI] Conversation completed. Navigating to safety assessment.');
@@ -190,7 +194,13 @@ export function KioskAiConversationPage() {
                     {voiceGuidance && (
                       <button
                         type="button"
-                        onClick={() => TTS.speak(currentQuestion.question, i18n.language)}
+                        onClick={() => {
+                          try {
+                            TTS.speak(currentQuestion.question, i18n.language);
+                          } catch (e) {
+                            console.warn('[KioskAI] Manual TTS speak failed non-fatally:', e);
+                          }
+                        }}
                         className="text-xs font-bold text-[#1E56A0] flex items-center gap-1 cursor-pointer bg-white px-2 py-0.5 rounded border border-blue-200"
                       >
                         <Volume2 className="w-3.5 h-3.5" />
