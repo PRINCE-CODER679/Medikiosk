@@ -165,4 +165,50 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
+/* Phase 3 Accessibility Attributes */
+html[data-high-contrast="true"] {
+  filter: contrast(1.15);
+}
+html[data-high-contrast="true"] body {
+  background-color: #090D16 !important;
+  color: #F8FAFC !important;
+}
+html[data-high-contrast="true"] .bg-white {
+  background-color: #1E293B !important;
+  color: #FFFFFF !important;
+  border-color: #475569 !important;
+}
+html[data-high-contrast="true"] .bg-slate-50,
+html[data-high-contrast="true"] .bg-slate-100 {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+}
+html[data-high-contrast="true"] .text-slate-900,
+html[data-high-contrast="true"] .text-slate-800,
+html[data-high-contrast="true"] .text-slate-700,
+html[data-high-contrast="true"] .text-slate-600 {
+  color: #F1F5F9 !important;
+}
+html[data-high-contrast="true"] .text-slate-500,
+html[data-high-contrast="true"] .text-slate-400 {
+  color: #CBD5E1 !important;
+}
+
+html[data-text-size="large"] {
+  font-size: 112.5%;
+}
+html[data-text-size="xlarge"] {
+  font-size: 125%;
+}
+
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+
 

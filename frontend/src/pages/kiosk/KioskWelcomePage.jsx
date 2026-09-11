@@ -85,13 +85,10 @@ export function KioskWelcomePage() {
             <div className="max-w-xl mx-auto space-y-5 pt-4">
               <KioskButton
                 variant="primary"
-                onClick={() => {
-                  setStarted(true);
-                  setCurrentStep(3); // Go straight to AI Interview
-                }}
+                onClick={() => navigate('/kiosk/identity')}
                 icon={Play}
                 subtext={t('kiosk_start_subtext')}
-                className="border-4 border-blue-400/50 shadow-2xl"
+                className="border-4 border-blue-400/50 shadow-2xl cursor-pointer"
               >
                 {t('kiosk_start_button')}
               </KioskButton>

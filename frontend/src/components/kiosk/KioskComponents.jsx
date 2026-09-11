@@ -69,6 +69,54 @@ function HeartPulse({ className }) {
   );
 }
 
+export function KioskStepIndicator({ currentStep = 1 }) {
+  const { t } = useTranslation();
+  const steps = [
+    { key: 1, label: t('step_1_identity', 'Identity') },
+    { key: 2, label: t('step_2_language', 'Language') },
+    { key: 3, label: t('step_4_consent', 'Consent') },
+    { key: 4, label: t('step_5_history', 'Health History') }
+  ];
+
+  return (
+    <div className="bg-white border-b border-slate-200 px-4 py-2.5 shadow-2xs">
+      <div className="max-w-3xl mx-auto flex items-center justify-between text-xs font-semibold text-slate-600">
+        <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto scroll-x-safe py-0.5">
+          {steps.map((step) => {
+            const isDone = currentStep > step.key;
+            const isCurrent = currentStep === step.key;
+            return (
+              <div key={step.key} className="flex items-center gap-2 shrink-0">
+                <span
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold transition-all ${
+                    isDone
+                      ? 'bg-teal-600 text-white'
+                      : isCurrent
+                      ? 'bg-[#1E56A0] text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-400 border border-slate-200'
+                  }`}
+                >
+                  {isDone ? <Check className="w-3.5 h-3.5" /> : step.key}
+                </span>
+                <span
+                  className={`font-bold transition-colors ${
+                    isCurrent ? 'text-[#1E56A0]' : isDone ? 'text-teal-700' : 'text-slate-400'
+                  }`}
+                >
+                  {step.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        <span className="text-slate-400 font-bold shrink-0 hidden sm:inline">
+          Step {currentStep} of 4
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function KioskProgressStepper({ currentStep = 3 }) {
   const { t } = useTranslation();
   const steps = [

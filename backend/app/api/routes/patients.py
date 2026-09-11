@@ -4,36 +4,20 @@ from app.services.store import store
 
 router = APIRouter()
 
-@router.post("/patients/identify", response_model=PatientResponse, summary="Identify Patient (ABHA or Aadhaar Mock)")
+@router.post("/patients/identify", response_model=PatientResponse, summary="Identify Patient (ABHA ID or Patient ID Mock)")
 def identify_patient(req: PatientIdentifyRequest):
-    if not req.identifier or len(req.identifier.strip()) < 4:
+    identifier = req.identifier.strip() if req.identifier else ""
+    if not identifier or len(identifier) < 3:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Please provide a valid ID number."
+            detail="Please enter a valid Patient ID (e.g. PAT-10928) or 14-digit ABHA ID."
         )
 
-    method = req.method.upper()
-    if method == "ABHA":
-        # Validate ABHA format (digits and hyphens, approx 14 digits)
-        clean_id = req.identifier.replace(" ", "").replace("-", "")
-        if not clean_id.isdigit() or len(clean_id) != 14:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Please enter a valid 14-digit ABHA ID (e.g. 12-3456-7890-1234)."
-            )
-        patient = store.identify_abha(req.identifier)
-    elif method == "AADHAAR":
-        clean_id = req.identifier.replace(" ", "").replace("-", "")
-        if not clean_id.isdigit() or len(clean_id) != 12:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Please enter a valid 12-digit Aadhaar number."
-            )
-        patient = store.identify_aadhaar(clean_id)
-    else:
+    patient = store.lookup_patient(identifier, req.method)
+    if not patient:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid identity method specified."
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No patient record found for '{identifier}'. Please check the ID or register as a new patient."
         )
 
     return patient

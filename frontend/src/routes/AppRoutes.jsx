@@ -12,6 +12,17 @@ import { AnalyticsPage } from '../pages/dashboard/AnalyticsPage';
 import { IntegrationsPage } from '../pages/dashboard/IntegrationsPage';
 import { SettingsPage } from '../pages/dashboard/SettingsPage';
 import { KioskWelcomePage } from '../pages/kiosk/KioskWelcomePage';
+import { KioskIdentityPage } from '../pages/kiosk/KioskIdentityPage';
+import { KioskConfirmationPage } from '../pages/kiosk/KioskConfirmationPage';
+import { KioskSessionPage } from '../pages/kiosk/KioskSessionPage';
+import { KioskLanguagePage } from '../pages/kiosk/KioskLanguagePage';
+import { KioskAccessibilityPage } from '../pages/kiosk/KioskAccessibilityPage';
+import { KioskConsentPage } from '../pages/kiosk/KioskConsentPage';
+import { KioskHistoryPage } from '../pages/kiosk/KioskHistoryPage';
+import { KioskHistoryReviewPage } from '../pages/kiosk/KioskHistoryReviewPage';
+import { KioskAiConversationPage } from '../pages/kiosk/KioskAiConversationPage';
+import { KioskSafetyPage } from '../pages/kiosk/KioskSafetyPage';
+import { KioskDocumentPage } from '../pages/kiosk/KioskDocumentPage';
 
 export function AppRoutes() {
   return (
@@ -28,7 +39,19 @@ export function AppRoutes() {
       <Route path="/integrations" element={<IntegrationsPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/kiosk" element={<KioskWelcomePage />} />
+      <Route path="/kiosk/identity" element={<KioskIdentityPage />} />
+      <Route path="/kiosk/confirmation" element={<KioskConfirmationPage />} />
+      <Route path="/kiosk/session" element={<KioskSessionPage />} />
+      <Route path="/kiosk/language" element={<KioskLanguagePage />} />
+      <Route path="/kiosk/accessibility" element={<KioskAccessibilityPage />} />
+      <Route path="/kiosk/consent" element={<KioskConsentPage />} />
+      <Route path="/kiosk/history" element={<KioskHistoryPage />} />
+      <Route path="/kiosk/history/ai-guidance" element={<KioskAiConversationPage />} />
+      <Route path="/kiosk/history/safety" element={<KioskSafetyPage />} />
+      <Route path="/kiosk/history/documents" element={<KioskDocumentPage />} />
+      <Route path="/kiosk/history/review" element={<KioskHistoryReviewPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
+
