@@ -16,32 +16,91 @@ import {
   Activity,
   ArrowRight,
   ArrowLeft,
-  Users,
-  User,
   FlaskConical,
-  Heart,
   FileCheck,
-  Tag,
   Download,
   AlertCircle,
   HelpCircle
 } from 'lucide-react';
 
-export function KioskSummaryPage() {
+class SummaryErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('KioskSummaryPage rendering error caught by ErrorBoundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-center items-center p-6 text-center font-sans">
+          <div className="max-w-md w-full bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200 font-bold text-xl">
+              ⚠️
+            </div>
+            <h2 className="text-xl font-bold text-slate-900">Clinical Summary Verification</h2>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Your patient intake data and clinical safety check have been recorded successfully. A physician will review your details prior to consultation.
+            </p>
+            <div className="pt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="w-full py-3 px-4 rounded-xl bg-[#1E56A0] hover:bg-[#16427D] text-white font-bold text-xs cursor-pointer"
+              >
+                Reload Summary
+              </button>
+              <a
+                href="/kiosk/history/review"
+                className="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs text-center block text-decoration-none"
+              >
+                Back to Intake Review
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function KioskSummaryContent() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { voiceGuidance } = useAccessibility();
 
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
-  const [activeSession, setActiveSession] = useState(null);
 
   const safeRender = (val, fallback = '') => {
     if (val === null || val === undefined) return fallback;
-    if (typeof val === 'string' || typeof val === 'number') return String(val);
+    if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') return String(val);
     if (typeof val === 'object') {
-      if (Array.isArray(val)) return val.map(v => safeRender(v, fallback)).join(', ');
-      return val.name || val.title || val.label || val.value || val.allergen || val.symptom || val.condition || val.testName || JSON.stringify(val);
+      if (Array.isArray(val)) {
+        return val.map(v => safeRender(v, fallback)).filter(Boolean).join(', ') || fallback;
+      }
+      return (
+        val.name ||
+        val.medicationName ||
+        val.title ||
+        val.label ||
+        val.value ||
+        val.allergen ||
+        val.symptom ||
+        val.symptomName ||
+        val.condition ||
+        val.testName ||
+        val.procedureName ||
+        JSON.stringify(val)
+      );
     }
     return String(val);
   };
@@ -52,7 +111,6 @@ export function KioskSummaryPage() {
     if (rawSession) {
       try {
         sessionObj = JSON.parse(rawSession);
-        setActiveSession(sessionObj);
       } catch (e) {}
     }
 
@@ -86,7 +144,7 @@ export function KioskSummaryPage() {
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col justify-between select-none font-sans print:bg-white print:text-black">
       {/* Kiosk Header */}
       <div className="print:hidden">
-        <KioskHeader showBack={true} onBack={() => navigate('/kiosk/review')} />
+        <KioskHeader showBack={true} onBack={() => navigate('/kiosk/history/review')} />
       </div>
 
       {/* Main Container */}
@@ -143,7 +201,7 @@ export function KioskSummaryPage() {
                 </div>
                 <div>
                   <span className="text-slate-500 font-medium block">Age / Gender:</span>
-                  <span className="font-bold text-slate-900">{safeRender(summary.patientHeader?.age)} Yrs / {safeRender(summary.patientHeader?.gender)}</span>
+                  <span className="font-bold text-slate-900">{safeRender(summary.patientHeader?.age, 'Not reported')} Yrs / {safeRender(summary.patientHeader?.gender, 'Not specified')}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 font-medium block">ABHA ID / ABDM:</span>
@@ -214,10 +272,12 @@ export function KioskSummaryPage() {
                       AI Follow-up Clarifications (Phase 5):
                     </span>
                     {summary.hpi.aiClarifications.map((item, idx) => (
-                      <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
-                        <span className="font-medium text-slate-700">• {safeRender(item.questionField)}:</span>
-                        <span className="font-bold text-slate-900">{safeRender(item.answer)}</span>
-                      </div>
+                      item ? (
+                        <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
+                          <span className="font-medium text-slate-700">• {safeRender(item?.questionField, 'Clarification')}:</span>
+                          <span className="font-bold text-slate-900">{safeRender(item?.answer, 'Not provided')}</span>
+                        </div>
+                      ) : null
                     ))}
                   </div>
                 )}
@@ -238,9 +298,11 @@ export function KioskSummaryPage() {
                     <span className="text-slate-500 font-medium block">Past Conditions:</span>
                     <div className="flex flex-wrap gap-1.5 mt-1">
                       {summary.pastMedicalHistory?.conditions?.map((c, idx) => (
-                        <span key={idx} className="px-2.5 py-1 rounded bg-white border border-slate-200 font-bold text-slate-800">
-                          {safeRender(c)}
-                        </span>
+                        c != null ? (
+                          <span key={idx} className="px-2.5 py-1 rounded bg-white border border-slate-200 font-bold text-slate-800">
+                            {safeRender(c, 'Condition')}
+                          </span>
+                        ) : null
                       ))}
                     </div>
                   </div>
@@ -262,16 +324,18 @@ export function KioskSummaryPage() {
                   <div className="text-xs space-y-1.5">
                     {summary.currentMedications?.length > 0 ? (
                       summary.currentMedications.map((m, idx) => (
-                        <div key={idx} className="p-2 rounded bg-white border border-slate-200 space-y-0.5">
-                          <div className="flex justify-between font-bold text-slate-900">
-                            <span>{safeRender(m.name)}</span>
-                            <span className="font-mono text-[11px] text-slate-500">{safeRender(m.dose)}</span>
+                        m ? (
+                          <div key={idx} className="p-2 rounded bg-white border border-slate-200 space-y-0.5">
+                            <div className="flex justify-between font-bold text-slate-900">
+                              <span>{safeRender(m?.name || m?.medicationName, 'Medication')}</span>
+                              <span className="font-mono text-[11px] text-slate-500">{safeRender(m?.dose, 'Dose not specified')}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-600 flex justify-between">
+                              <span>Freq: {safeRender(m?.frequency, 'As advised')}</span>
+                              <span className="font-mono text-[10px] text-slate-400">[{safeRender(m?.provenance, 'PATIENT_REPORTED')}]</span>
+                            </div>
                           </div>
-                          <div className="text-[11px] text-slate-600 flex justify-between">
-                            <span>Freq: {safeRender(m.frequency)}</span>
-                            <span className="font-mono text-[10px] text-slate-400">[{safeRender(m.provenance)}]</span>
-                          </div>
-                        </div>
+                        ) : null
                       ))
                     ) : (
                       <span className="text-slate-500 font-medium">No current medications reported.</span>
@@ -291,10 +355,12 @@ export function KioskSummaryPage() {
                   <div className="text-xs space-y-1.5">
                     {summary.allergies?.length > 0 ? (
                       summary.allergies.map((a, idx) => (
-                        <div key={idx} className="p-2 rounded bg-white border border-rose-200 text-rose-900 flex justify-between font-bold">
-                          <span>• {safeRender(a.allergen)}</span>
-                          <span className="font-normal text-slate-600">{safeRender(a.reaction)}</span>
-                        </div>
+                        a ? (
+                          <div key={idx} className="p-2 rounded bg-white border border-rose-200 text-rose-900 flex justify-between font-bold">
+                            <span>• {safeRender(a?.allergen, 'Allergen')}</span>
+                            <span className="font-normal text-slate-600">{safeRender(a?.reaction, 'Reaction not specified')}</span>
+                          </div>
+                        ) : null
                       ))
                     ) : (
                       <span className="text-slate-500 font-medium">No known allergies reported.</span>
@@ -322,10 +388,12 @@ export function KioskSummaryPage() {
                     <span className="text-slate-500 font-bold block">Lab Investigations:</span>
                     {summary.investigationsVitals?.investigations?.length > 0 ? (
                       summary.investigationsVitals.investigations.map((inv, idx) => (
-                        <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
-                          <span className="font-semibold text-slate-800">{safeRender(inv.testName)}</span>
-                          <span className="font-bold text-blue-900">{safeRender(inv.resultValue)} {safeRender(inv.unit)}</span>
-                        </div>
+                        inv ? (
+                          <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
+                            <span className="font-semibold text-slate-800">{safeRender(inv?.testName, 'Lab Test')}</span>
+                            <span className="font-bold text-blue-900">{safeRender(inv?.resultValue)} {safeRender(inv?.unit)}</span>
+                          </div>
+                        ) : null
                       ))
                     ) : (
                       <span className="text-slate-500 font-medium">No lab investigations extracted.</span>
@@ -337,10 +405,12 @@ export function KioskSummaryPage() {
                     <span className="text-slate-500 font-bold block">Vital Signs:</span>
                     {summary.investigationsVitals?.vitals?.length > 0 ? (
                       summary.investigationsVitals.vitals.map((v, idx) => (
-                        <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
-                          <span className="font-semibold text-slate-800">{safeRender(v.type)}</span>
-                          <span className="font-bold text-rose-800">{safeRender(v.value)} {safeRender(v.unit)}</span>
-                        </div>
+                        v ? (
+                          <div key={idx} className="p-2 rounded bg-white border border-slate-200 flex justify-between">
+                            <span className="font-semibold text-slate-800">{safeRender(v?.type, 'Vital Sign')}</span>
+                            <span className="font-bold text-rose-800">{safeRender(v?.value)} {safeRender(v?.unit)}</span>
+                          </div>
+                        ) : null
                       ))
                     ) : (
                       <span className="text-slate-500 font-medium">No vitals extracted from documents.</span>
@@ -357,9 +427,11 @@ export function KioskSummaryPage() {
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {summary.missingInformation?.map((item, idx) => (
-                    <span key={idx} className="px-2.5 py-0.5 rounded bg-white border border-slate-300 font-medium text-slate-600">
-                      • {safeRender(item)}
-                    </span>
+                    item ? (
+                      <span key={idx} className="px-2.5 py-0.5 rounded bg-white border border-slate-300 font-medium text-slate-600">
+                        • {safeRender(item)}
+                      </span>
+                    ) : null
                   ))}
                 </div>
               </div>
@@ -386,7 +458,7 @@ export function KioskSummaryPage() {
           <div className="p-5 sm:p-7 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 print:hidden">
             <button
               type="button"
-              onClick={() => navigate('/kiosk/review')}
+              onClick={() => navigate('/kiosk/history/review')}
               className="py-3.5 px-5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-xs cursor-pointer flex items-center justify-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -423,3 +495,12 @@ export function KioskSummaryPage() {
     </div>
   );
 }
+
+export function KioskSummaryPage() {
+  return (
+    <SummaryErrorBoundary>
+      <KioskSummaryContent />
+    </SummaryErrorBoundary>
+  );
+}
+
