@@ -56,6 +56,9 @@ class DataStore:
         self.conversations: Dict[str, dict] = {}
         self.safety_assessments: Dict[str, dict] = {}
         self.documents: Dict[str, dict] = {}
+        self.entities: Dict[str, dict] = {}
+        self.timelines: Dict[str, dict] = {}
+        self.summaries: Dict[str, dict] = {}
 
     def generate_patient_id(self) -> str:
         num = random.randint(10000, 99999)
@@ -72,6 +75,18 @@ class DataStore:
 
     def get_patient(self, patient_id: str) -> Optional[dict]:
         return self.patients.get(patient_id)
+
+    def save_patient(self, patient: dict) -> dict:
+        self.patients[patient["id"]] = patient
+        return patient
+
+    def save_encounter(self, encounter: dict) -> dict:
+        self.encounters[encounter["id"]] = encounter
+        return encounter
+
+    def save_session(self, session: dict) -> dict:
+        self.sessions[session["sessionId"]] = session
+        return session
 
     def lookup_patient(self, identifier: str, method: str = "AUTO") -> Optional[dict]:
         clean_id = identifier.strip().upper()
@@ -198,7 +213,14 @@ class DataStore:
     def get_session(self, session_id: str) -> Optional[dict]:
         return self.sessions.get(session_id)
 
-    def save_clinical_history(self, encounter_id: str, patient_id: str, history_data: dict) -> dict:
+    def save_clinical_history(self, encounter_id: str, arg2, arg3=None) -> dict:
+        if isinstance(arg2, dict) and arg3 is None:
+            history_data = arg2
+            patient_id = history_data.get("patientId") or "PAT-10928"
+        else:
+            patient_id = arg2
+            history_data = arg3 or {}
+
         now = datetime.datetime.now().isoformat()
         existing = self.clinical_histories.get(encounter_id, {
             "encounterId": encounter_id,
@@ -314,7 +336,12 @@ class DataStore:
     def get_safety_assessment(self, encounter_id: str) -> Optional[dict]:
         return self.safety_assessments.get(encounter_id)
 
-    def save_document(self, doc_data: dict) -> dict:
+    def save_document(self, arg1, arg2=None) -> dict:
+        if isinstance(arg1, dict):
+            doc_data = arg1
+        else:
+            doc_data = arg2
+            doc_data["encounterId"] = arg1
         doc_id = doc_data.get("documentId")
         self.documents[doc_id] = doc_data
         return doc_data
@@ -324,6 +351,27 @@ class DataStore:
 
     def list_encounter_documents(self, encounter_id: str) -> list[dict]:
         return [doc for doc in self.documents.values() if doc.get("encounterId") == encounter_id]
+
+    def save_entities(self, encounter_id: str, entity_payload: dict) -> dict:
+        self.entities[encounter_id] = entity_payload
+        return entity_payload
+
+    def get_entities(self, encounter_id: str) -> Optional[dict]:
+        return self.entities.get(encounter_id)
+
+    def save_timeline(self, encounter_id: str, timeline_payload: dict) -> dict:
+        self.timelines[encounter_id] = timeline_payload
+        return timeline_payload
+
+    def get_timeline(self, encounter_id: str) -> Optional[dict]:
+        return self.timelines.get(encounter_id)
+
+    def save_summary(self, encounter_id: str, summary_payload: dict) -> dict:
+        self.summaries[encounter_id] = summary_payload
+        return summary_payload
+
+    def get_summary(self, encounter_id: str) -> Optional[dict]:
+        return self.summaries.get(encounter_id)
 
 store = DataStore()
 

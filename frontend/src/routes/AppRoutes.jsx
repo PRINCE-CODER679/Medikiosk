@@ -23,6 +23,8 @@ import { KioskHistoryReviewPage } from '../pages/kiosk/KioskHistoryReviewPage';
 import { KioskAiConversationPage } from '../pages/kiosk/KioskAiConversationPage';
 import { KioskSafetyPage } from '../pages/kiosk/KioskSafetyPage';
 import { KioskDocumentPage } from '../pages/kiosk/KioskDocumentPage';
+import { KioskTimelinePage } from '../pages/kiosk/KioskTimelinePage';
+import { KioskSummaryPage } from '../pages/kiosk/KioskSummaryPage';
 
 export function AppRoutes() {
   return (
@@ -50,6 +52,10 @@ export function AppRoutes() {
       <Route path="/kiosk/history/safety" element={<KioskSafetyPage />} />
       <Route path="/kiosk/history/documents" element={<KioskDocumentPage />} />
       <Route path="/kiosk/history/review" element={<KioskHistoryReviewPage />} />
+      <Route path="/kiosk/timeline" element={<KioskTimelinePage />} />
+      <Route path="/kiosk/history/timeline" element={<KioskTimelinePage />} />
+      <Route path="/kiosk/summary" element={<KioskSummaryPage />} />
+      <Route path="/kiosk/history/summary" element={<KioskSummaryPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

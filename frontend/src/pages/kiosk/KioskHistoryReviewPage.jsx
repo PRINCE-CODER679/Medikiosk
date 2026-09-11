@@ -64,29 +64,32 @@ export function KioskHistoryReviewPage() {
   const handleConfirm = async () => {
     setLoading(true);
 
-    const encounterId = activeSession?.encounterId || activeSession?.encounter?.id;
-    const sessionId = activeSession?.sessionId || activeSession?.session?.sessionId;
+    const encounterId = activeSession?.encounterId || activeSession?.encounter?.id || 'ENC-2026-DEMO';
+    const patientId = activeSession?.patientId || activeSession?.patient?.id || 'PAT-10928';
+    const sessionId = activeSession?.sessionId || activeSession?.session?.sessionId || null;
 
     if (encounterId) {
       await ApiService.saveClinicalHistory(encounterId, {
         ...historyData,
         completionStatus: 'COMPLETED'
       });
+      await ApiService.generateSummary(encounterId, patientId, sessionId);
     }
 
     if (sessionId) {
       await ApiService.updateSession(sessionId, {
-        currentWorkflowStep: 'HISTORY_COMPLETED'
+        currentWorkflowStep: 'SUMMARY_GENERATED'
       });
     }
 
     // Save final confirmed status in session storage
     const updatedSession = JSON.parse(sessionStorage.getItem('activeSession') || '{}');
     updatedSession.historyCompleted = true;
+    updatedSession.summaryGenerated = true;
     sessionStorage.setItem('activeSession', JSON.stringify(updatedSession));
 
     setLoading(false);
-    navigate('/kiosk/session');
+    navigate('/kiosk/summary');
   };
 
   return (
@@ -362,10 +365,19 @@ export function KioskHistoryReviewPage() {
             <button
               type="button"
               onClick={() => navigate('/kiosk/history')}
-              className="py-3.5 px-5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-xs cursor-pointer flex items-center justify-center gap-1.5"
+              className="py-3.5 px-4 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-xs cursor-pointer flex items-center justify-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Edit Responses</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/kiosk/timeline')}
+              className="py-3.5 px-4 bg-white border border-blue-200 hover:bg-blue-50 text-[#1E56A0] rounded-xl font-bold text-xs cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <FileText className="w-4 h-4 text-blue-600" />
+              <span>View Health Timeline</span>
             </button>
 
             <button
@@ -375,7 +387,7 @@ export function KioskHistoryReviewPage() {
               className="flex-1 py-4 px-6 bg-[#1E56A0] hover:bg-[#16427D] text-white rounded-xl font-bold text-base transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-5 h-5 text-emerald-300" />
-              <span>{t('confirm_health_info', 'CONFIRM HEALTH INFORMATION')}</span>
+              <span>{t('generate_summary_btn', 'GENERATE CLINICAL SUMMARY')}</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>

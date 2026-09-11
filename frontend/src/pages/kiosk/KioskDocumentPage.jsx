@@ -16,6 +16,7 @@ export function KioskDocumentPage() {
   const [processingStep, setProcessingStep] = useState('');
   const [documents, setDocuments] = useState([]);
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const [extractedEntities, setExtractedEntities] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const activeEncounter = JSON.parse(sessionStorage.getItem('activeEncounter') || '{}');
@@ -26,9 +27,9 @@ export function KioskDocumentPage() {
   const patientId = activePatient.id || 'PAT-10928';
   const sessionId = activeSession.sessionId || null;
 
-  // Load existing uploaded documents on mount
+  // Load existing uploaded documents and extracted entities on mount
   useEffect(() => {
-    async function loadDocuments() {
+    async function loadDocumentsAndEntities() {
       const res = await ApiService.getEncounterDocuments(encounterId, patientId, sessionId);
       if (res.ok && res.data && res.data.documents) {
         setDocuments(res.data.documents);
@@ -36,8 +37,12 @@ export function KioskDocumentPage() {
           setSelectedDoc(res.data.documents[res.data.documents.length - 1]);
         }
       }
+      const entRes = await ApiService.getEntities(encounterId, patientId, sessionId);
+      if (entRes.ok && entRes.data) {
+        setExtractedEntities(entRes.data);
+      }
     }
-    loadDocuments();
+    loadDocumentsAndEntities();
   }, [encounterId, patientId, sessionId]);
 
   const handleProcessDocument = async (formData, isSample = false) => {
@@ -65,6 +70,12 @@ export function KioskDocumentPage() {
 
       if (voiceGuidance) {
         TTS.speak(`${t('kiosk_scan_completed')} ${newDoc.fileName}`, i18n.language);
+      }
+
+      // Phase 8: Automatically trigger clinical entity extraction on encounter documents
+      const entityRes = await ApiService.extractEntities(encounterId, patientId, sessionId);
+      if (entityRes.ok && entityRes.data) {
+        setExtractedEntities(entityRes.data);
       }
     } else {
       setErrorMessage(res.error || 'Failed to process document OCR. Please check file type or try another file.');
@@ -234,6 +245,97 @@ export function KioskDocumentPage() {
                 This content has been tagged as <span className="font-semibold underline">OCR_EXTRACTED</span> and must be verified by a healthcare professional during your consultation.
               </p>
             </div>
+
+            {/* Phase 8: Information Extracted from Your Document */}
+            {extractedEntities && extractedEntities.totalEntities > 0 && (
+              <div className="pt-4 border-t border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#1E56A0] flex items-center gap-1.5">
+                    <span>Clinical Entities</span>
+                    <span className="bg-blue-100 text-[#1E56A0] px-2 py-0.5 rounded-full font-mono font-bold text-[10px]">
+                      {extractedEntities.totalEntities} Extracted
+                    </span>
+                  </h4>
+                  <span className="text-[10px] font-mono text-slate-500">Provenance: {extractedEntities.source || 'OCR_EXTRACTED_ENTITY'}</span>
+                </div>
+
+                <p className="text-xs text-slate-600 font-medium">
+                  Information extracted from your document for physician review before consultation:
+                </p>
+
+                <div className="space-y-2">
+                  {/* Conditions */}
+                  {extractedEntities.conditions && extractedEntities.conditions.length > 0 && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Conditions / Diagnoses</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {extractedEntities.conditions.map((c, i) => (
+                          <span key={i} className="px-2.5 py-1 rounded bg-blue-50 text-[#1E56A0] border border-blue-200 text-xs font-bold">
+                            {c.name} {c.status ? `(${c.status})` : ''}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Medications */}
+                  {extractedEntities.medications && extractedEntities.medications.length > 0 && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Medications</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {extractedEntities.medications.map((m, i) => (
+                          <span key={i} className="px-2.5 py-1 rounded bg-teal-50 text-teal-800 border border-teal-200 text-xs font-bold">
+                            💊 {m.medicationName} {m.dose || ''} {m.frequency ? `— ${m.frequency}` : ''}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Lab Investigations */}
+                  {extractedEntities.investigations && extractedEntities.investigations.length > 0 && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Lab Investigations</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {extractedEntities.investigations.map((inv, i) => (
+                          <span key={i} className="px-2.5 py-1 rounded bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-bold">
+                            🧪 {inv.testName}: {inv.resultValue} {inv.unit || ''}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Vitals */}
+                  {extractedEntities.vitals && extractedEntities.vitals.length > 0 && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Vitals</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {extractedEntities.vitals.map((v, i) => (
+                          <span key={i} className="px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold">
+                            ❤️ {v.type}: {v.value} {v.unit || ''}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Symptoms */}
+                  {extractedEntities.symptoms && extractedEntities.symptoms.length > 0 && (
+                    <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Reported Symptoms</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {extractedEntities.symptoms.map((s, i) => (
+                          <span key={i} className="px-2.5 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
+                            🩺 {s.symptomName} {s.severity ? `(${s.severity})` : ''}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

@@ -225,6 +225,126 @@ class DocumentListResponse(BaseModel):
     documents: list[DocumentResponse] = []
     totalCount: int = 0
 
+# Phase 8: Clinical Entity Extraction Schemas
+class ConditionEntitySchema(BaseModel):
+    name: str
+    status: Optional[str] = None
+    date: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class MedicationEntitySchema(BaseModel):
+    medicationName: str
+    dose: Optional[str] = None
+    frequency: Optional[str] = None
+    route: Optional[str] = None
+    duration: Optional[str] = None
+    reason: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class AllergyEntitySchema(BaseModel):
+    allergen: str
+    reaction: Optional[str] = None
+    severity: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class SymptomEntitySchema(BaseModel):
+    symptomName: str
+    severity: Optional[str] = None
+    duration: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class ProcedureEntitySchema(BaseModel):
+    procedureName: str
+    date: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class InvestigationLabEntitySchema(BaseModel):
+    testName: str
+    resultValue: Optional[str] = None
+    unit: Optional[str] = None
+    referenceRange: Optional[str] = None
+    date: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class VitalEntitySchema(BaseModel):
+    type: str
+    value: str
+    unit: Optional[str] = None
+    date: Optional[str] = None
+    sourceDocumentId: str
+    sourceSnippet: str
+    provenance: str = "OCR_EXTRACTED_ENTITY"
+
+class EntityExtractionResponse(BaseModel):
+    encounterId: str
+    patientId: str
+    conditions: list[ConditionEntitySchema] = []
+    medications: list[MedicationEntitySchema] = []
+    allergies: list[AllergyEntitySchema] = []
+    symptoms: list[SymptomEntitySchema] = []
+    procedures: list[ProcedureEntitySchema] = []
+    investigations: list[InvestigationLabEntitySchema] = []
+    vitals: list[VitalEntitySchema] = []
+    totalEntities: int = 0
+    extractedAt: str
+    source: str = "OCR_EXTRACTED_ENTITY"
+
+# Phase 9: Medical Timeline & Patient Record Schemas
+class TimelineItemSchema(BaseModel):
+    id: str
+    patientId: str
+    encounterId: str
+    eventType: str = Field(..., description="ENCOUNTER | CHIEF_COMPLAINT | CLINICAL_HISTORY | AI_CLARIFICATION | SAFETY_ASSESSMENT | DOCUMENT | CONDITION | MEDICATION | ALLERGY | SYMPTOM | PROCEDURE | INVESTIGATION | VITAL")
+    title: str
+    description: str
+    clinicalDate: Optional[str] = None
+    systemTimestamp: str
+    source: str = Field(..., description="STRUCTURED_HISTORY | AI_CLARIFICATION | SAFETY_ENGINE | MEDICAL_DOCUMENT | OCR_EXTRACTED_ENTITY | ENCOUNTER_REGISTER")
+    sourceDocumentId: Optional[str] = None
+    provenance: str
+    relatedEntityId: Optional[str] = None
+    metadata: Optional[dict] = None
+
+class TimelineResponse(BaseModel):
+    encounterId: str
+    patientId: str
+    items: list[TimelineItemSchema] = []
+    totalItems: int = 0
+    builtAt: str
+
+# Phase 10: Clinical Summary Engine Schemas
+class ClinicalSummaryResponse(BaseModel):
+    encounterId: str
+    patientId: str
+    patientHeader: dict
+    chiefComplaint: dict
+    hpi: dict
+    pastMedicalHistory: dict
+    currentMedications: list[dict] = []
+    allergies: list[dict] = []
+    familyPersonalHistory: dict
+    reviewOfSystems: dict
+    investigationsVitals: dict
+    documentDerivedInfo: dict
+    safetyAssessment: dict
+    timelineSummary: dict
+    missingInformation: list[str] = []
+    physicianVerificationNotice: str = "NOTICE: Automated clinical intake summary compiled for physician review. Requires physician verification. Does not constitute a medical diagnosis or treatment prescription."
+    generatedAt: str
+    summaryVersion: str = "1.0"
+
 
 
 
