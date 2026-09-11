@@ -38,13 +38,13 @@ export function AlertsPage() {
               className={`border-l-4 ${isCritical ? 'border-l-red-600 bg-red-50/20' : 'border-l-amber-500 bg-amber-50/20'}`}
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-1.5 text-left min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={isCritical ? 'critical' : 'warning'} size="sm">
                       {alt.severity.toUpperCase()}
                     </Badge>
                     <span className="text-xs font-mono text-slate-400">{alt.timestamp}</span>
-                    <span className="text-xs font-semibold text-slate-700">• {alt.patientName} ({alt.patientId})</span>
+                    <span className="text-xs font-semibold text-slate-700 truncate">• {alt.patientName} ({alt.patientId})</span>
                   </div>
                   <h3 className="text-base font-bold text-slate-900">{alt.title}</h3>
                   <p className="text-xs text-slate-600 font-medium">{alt.description}</p>

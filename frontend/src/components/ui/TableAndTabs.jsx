@@ -77,7 +77,7 @@ export function Tabs({
   className = ''
 }) {
   return (
-    <div className={`scroll-x-safe border-b border-slate-200 flex gap-4 sm:gap-6 text-sm font-medium -mx-1 px-1 ${className}`}>
+    <div className={`overflow-x-auto whitespace-nowrap border-b border-slate-200 flex gap-4 sm:gap-6 text-sm font-medium -mx-1 px-1 scrollbar-none ${className}`}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -85,7 +85,7 @@ export function Tabs({
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            className={`pb-3 px-1 relative transition-all cursor-pointer ${
+            className={`pb-3 px-1 relative transition-all cursor-pointer shrink-0 ${
               isActive
                 ? 'text-[#1E56A0] font-semibold'
                 : 'text-slate-500 hover:text-slate-800'

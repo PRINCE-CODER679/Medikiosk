@@ -103,15 +103,15 @@ export function PatientDetailPage() {
         </Badge>
       </div>
 
-      {/* Sticky Patient Header Card */}
-      <div className="sticky top-16 z-20 shadow-xl rounded-3xl overflow-hidden mb-6">
-        <div className="bg-gradient-to-r from-[#0F172A] via-[#1E3A8A] to-[#0D9488] text-white p-6 md:p-8">
+      {/* Patient Header Card (static on mobile, sticky on sm+) */}
+      <div className="static sm:sticky top-16 z-20 shadow-xl rounded-3xl overflow-hidden mb-6">
+        <div className="bg-gradient-to-r from-[#0F172A] via-[#1E3A8A] to-[#0D9488] text-white p-5 md:p-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <Avatar name={patient.name} size="xl" className="ring-4 ring-white/20" />
-              <div className="text-left bg-transparent">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-black text-white tracking-tight">{patient.name}</h1>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <Avatar name={patient.name} size="xl" className="ring-4 ring-white/20 shrink-0" />
+              <div className="text-left bg-transparent min-w-0">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight truncate">{patient.name}</h1>
                   <Badge variant="primary" size="sm">ABHA Verified</Badge>
                 </div>
                 <p className="text-xs text-slate-200 font-mono mt-1 font-semibold">
@@ -147,7 +147,7 @@ export function PatientDetailPage() {
       </div>
 
       {/* Tabs Selector */}
-      <div className="scroll-x-safe flex gap-4 sm:gap-6 text-sm font-medium border-b border-slate-200 -mx-1 px-1">
+      <div className="overflow-x-auto flex gap-4 sm:gap-6 text-sm font-medium border-b border-slate-200 -mx-1 px-1 scrollbar-none">
         {[
           { id: 'summary', label: t('clinical_summary'), icon: FileText },
           { id: 'vitals', label: 'Vitals & Allergies', icon: HeartPulse },

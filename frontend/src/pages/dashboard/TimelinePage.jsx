@@ -88,16 +88,16 @@ export function TimelinePage() {
                   className="bg-slate-50 hover:bg-slate-100/80 p-5 rounded-2xl border border-slate-200/80 transition-all cursor-pointer shadow-2xs group"
                 >
                   {/* Collapsed Header */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono font-extrabold text-slate-400">{ev.date}</span>
+                  <div className="flex items-start sm:items-center justify-between gap-3 text-left">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <span className="text-xs font-mono font-extrabold text-slate-500">{ev.date}</span>
                       <Badge variant="primary" size="sm">{ev.badge}</Badge>
-                      <h4 className="text-base font-extrabold text-slate-900 group-hover:text-[#1E56A0] transition-colors">
+                      <h4 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#1E56A0] transition-colors">
                         {ev.title}
                       </h4>
                     </div>
                     {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-slate-500" />
+                      <ChevronUp className="w-5 h-5 text-slate-500 shrink-0 mt-0.5 sm:mt-0" />
                     ) : (
                       <ChevronDown className="w-5 h-5 text-slate-400 group-hover:text-slate-700" />
                     )}

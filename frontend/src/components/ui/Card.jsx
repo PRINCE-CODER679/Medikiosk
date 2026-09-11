@@ -13,7 +13,7 @@ export function Card({
 }) {
   const borderClass = bordered ? 'border border-slate-200/90' : '';
   const hoverClass = hoverable ? 'transition-all duration-150 hover:shadow-xs hover:border-slate-300' : '';
-  const paddingClass = padding ? 'p-5' : '';
+  const paddingClass = padding ? 'p-4 sm:p-5' : '';
 
   return (
     <div
@@ -21,12 +21,12 @@ export function Card({
       {...props}
     >
       {(title || action) && (
-        <div className={`flex items-center justify-between pb-4 border-b border-slate-100 ${padding ? 'mb-4' : 'px-5 pt-5 mb-0'}`}>
-          <div>
-            {title && <h3 className="text-base font-bold text-slate-900 tracking-tight">{title}</h3>}
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-slate-100 ${padding ? 'mb-4' : 'px-4 sm:px-5 pt-4 sm:pt-5 mb-0'}`}>
+          <div className="text-left">
+            {title && <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">{title}</h3>}
             {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
           </div>
-          {action && <div>{action}</div>}
+          {action && <div className="self-start sm:self-auto">{action}</div>}
         </div>
       )}
       {children}

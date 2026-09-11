@@ -103,7 +103,7 @@ export function KioskProgressStepper({ currentStep = 3 }) {
                 {isDone ? <Check className="w-3.5 h-3.5" /> : step.key}
               </div>
               <span
-                className={`text-[9px] sm:text-[10px] font-extrabold tracking-wider text-center leading-tight max-w-[48px] sm:max-w-none ${
+                className={`text-[9px] sm:text-[10px] font-extrabold tracking-wider text-center leading-tight max-w-[72px] sm:max-w-none ${
                   isDone ? 'text-emerald-400' : isCurrent ? 'text-blue-300' : 'text-slate-500'
                 }`}
               >

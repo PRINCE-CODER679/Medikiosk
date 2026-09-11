@@ -59,36 +59,38 @@ export function IntegrationsPage() {
         }
       >
         <div className="py-6 px-4 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-6">
-          <div className="flex items-center justify-between relative">
-            <div className="absolute top-1/2 left-6 right-6 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
+          <div className="overflow-x-auto pb-2 scrollbar-none">
+            <div className="flex items-center justify-between relative min-w-[500px] sm:min-w-0">
+              <div className="absolute top-1/2 left-6 right-6 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
 
-            {steps.map((st) => {
-              const isDone = syncStep >= st.key;
-              const isCurrent = syncStep === st.key && syncing;
+              {steps.map((st) => {
+                const isDone = syncStep >= st.key;
+                const isCurrent = syncStep === st.key && syncing;
 
-              return (
-                <div key={st.key} className="relative z-10 flex flex-col items-center gap-2">
-                  <div
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-xs transition-all ${
-                      isDone
-                        ? 'bg-emerald-600 text-white shadow-lg'
-                        : isCurrent
-                        ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-110 animate-pulse'
-                        : 'bg-slate-800 text-slate-500 border border-slate-700'
-                    }`}
-                  >
-                    {isDone ? <Check className="w-5 h-5" /> : st.key}
+                return (
+                  <div key={st.key} className="relative z-10 flex flex-col items-center gap-2">
+                    <div
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-xs transition-all ${
+                        isDone
+                          ? 'bg-emerald-600 text-white shadow-lg'
+                          : isCurrent
+                          ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-110 animate-pulse'
+                          : 'bg-slate-800 text-slate-500 border border-slate-700'
+                      }`}
+                    >
+                      {isDone ? <Check className="w-5 h-5" /> : st.key}
+                    </div>
+                    <span
+                      className={`text-[11px] font-extrabold tracking-wider ${
+                        isDone ? 'text-emerald-400' : isCurrent ? 'text-blue-300' : 'text-slate-500'
+                      }`}
+                    >
+                      {st.label}
+                    </span>
                   </div>
-                  <span
-                    className={`text-[11px] font-extrabold tracking-wider ${
-                      isDone ? 'text-emerald-400' : isCurrent ? 'text-blue-300' : 'text-slate-500'
-                    }`}
-                  >
-                    {st.label}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-teal-300 flex items-center justify-between">
