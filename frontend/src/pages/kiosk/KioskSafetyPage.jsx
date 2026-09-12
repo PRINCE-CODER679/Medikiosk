@@ -9,7 +9,11 @@ import { ApiService } from '../../services/api';
 export function KioskSafetyPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { isHighContrast, getTextSizeClass, voiceGuidance } = useAccessibility();
+  const {
+    highContrast: isHighContrast,
+    getFontSizeClass: getTextSizeClass,
+    voiceGuidance
+  } = useAccessibility();
 
   const [loading, setLoading] = useState(true);
   const [assessment, setAssessment] = useState(null);

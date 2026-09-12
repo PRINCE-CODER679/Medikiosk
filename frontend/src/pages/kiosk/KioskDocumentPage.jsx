@@ -9,7 +9,11 @@ import { ApiService } from '../../services/api';
 export function KioskDocumentPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { isHighContrast, getTextSizeClass, voiceGuidance } = useAccessibility();
+  const {
+    highContrast: isHighContrast,
+    getFontSizeClass: getTextSizeClass,
+    voiceGuidance
+  } = useAccessibility();
 
   const [docType, setDocType] = useState('LAB_REPORT');
   const [isProcessing, setIsProcessing] = useState(false);
